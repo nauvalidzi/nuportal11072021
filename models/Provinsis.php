@@ -87,7 +87,6 @@ class Provinsis extends DbTable
         // kode
         $this->kode = new DbField('provinsis', 'provinsis', 'x_kode', 'kode', '`kode`', '`kode`', 200, 10, -1, false, '`kode`', false, false, false, 'FORMATTED TEXT', 'TEXT');
         $this->kode->Nullable = false; // NOT NULL field
-        $this->kode->Required = true; // Required field
         $this->kode->Sortable = true; // Allow sort
         $this->kode->CustomMsg = $Language->FieldPhrase($this->TableVar, $this->kode->Param, "CustomMsg");
         $this->Fields['kode'] = &$this->kode;

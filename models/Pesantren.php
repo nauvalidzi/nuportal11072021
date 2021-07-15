@@ -139,6 +139,7 @@ class Pesantren extends DbTable
 
         // propinsi
         $this->propinsi = new DbField('pesantren', 'pesantren', 'x_propinsi', 'propinsi', '`propinsi`', '`propinsi`', 200, 255, -1, false, '`propinsi`', false, false, false, 'FORMATTED TEXT', 'SELECT');
+        $this->propinsi->Required = true; // Required field
         $this->propinsi->Sortable = true; // Allow sort
         $this->propinsi->UsePleaseSelect = true; // Use PleaseSelect by default
         $this->propinsi->PleaseSelectText = $Language->phrase("PleaseSelect"); // "PleaseSelect" text
@@ -376,7 +377,7 @@ class Pesantren extends DbTable
         $this->Fields['validasi'] = &$this->validasi;
 
         // validator
-        $this->validator = new DbField('pesantren', 'pesantren', 'x_validator', 'validator', '`validator`', '`validator`', 3, 11, -1, false, '`validator`', false, false, false, 'FORMATTED TEXT', 'SELECT');
+        $this->validator = new DbField('pesantren', 'pesantren', 'x_validator', 'validator', '`validator`', '`validator`', 3, 255, -1, false, '`validator`', false, false, false, 'FORMATTED TEXT', 'SELECT');
         $this->validator->Sortable = true; // Allow sort
         $this->validator->UsePleaseSelect = true; // Use PleaseSelect by default
         $this->validator->PleaseSelectText = $Language->phrase("PleaseSelect"); // "PleaseSelect" text

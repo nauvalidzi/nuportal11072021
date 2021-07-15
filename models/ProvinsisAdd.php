@@ -614,8 +614,7 @@ class ProvinsisAdd extends Provinsis
         $this->id->OldValue = $this->id->CurrentValue;
         $this->name->CurrentValue = null;
         $this->name->OldValue = $this->name->CurrentValue;
-        $this->kode->CurrentValue = null;
-        $this->kode->OldValue = $this->kode->CurrentValue;
+        $this->kode->CurrentValue = "0";
     }
 
     // Load form values
@@ -892,7 +891,7 @@ class ProvinsisAdd extends Provinsis
         $this->name->setDbValueDef($rsnew, $this->name->CurrentValue, "", false);
 
         // kode
-        $this->kode->setDbValueDef($rsnew, $this->kode->CurrentValue, "", false);
+        $this->kode->setDbValueDef($rsnew, $this->kode->CurrentValue, "", strval($this->kode->CurrentValue) == "");
 
         // Call Row Inserting event
         $insertRow = $this->rowInserting($rsold, $rsnew);
