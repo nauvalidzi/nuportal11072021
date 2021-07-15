@@ -6,7 +6,7 @@
 
 return [
     "Databases" => [
-        "DB" => ["id" => "DB", "type" => "MYSQL", "qs" => "`", "qe" => "`", "host" => "localhost", "port" => "3306", "user" => "root", "password" => "", "dbname" => "nuportal_11072021"]
+        "DB" => ["id" => "DB", "type" => "MYSQL", "qs" => "`", "qe" => "`", "host" => "ls-b9e992bc52faba574fd15397e7880de17f555d47.cpe3c4hmmuxu.us-east-2.rds.amazonaws.com", "port" => "3306", "user" => "root", "password" => "Jombang74", "dbname" => "nuportal_juli21"]
     ],
     "SMTP" => [
         "PHPMAILER_MAILER" => "smtp", // PHPMailer mailer
@@ -17,7 +17,7 @@ return [
         "SERVER_PASSWORD" => "NUadmin2021", // SMTP server password
     ],
     "JWT" => [
-        "SECRET_KEY" => "f79i3W40deOwGyBZ", // API Secret Key
+        "SECRET_KEY" => "lOOH7EKxg85BwNxC", // API Secret Key
         "ALGORITHM" => "HS512", // API Algorithm
         "AUTH_HEADER" => "X-Authorization", // API Auth Header (Note: The "Authorization" header is removed by IIS, use "X-Authorization" instead.)
         "NOT_BEFORE_TIME" => 0, // API access time before login
