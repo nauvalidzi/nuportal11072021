@@ -3073,33 +3073,13 @@ SORTHTML;
         	}
         } elseif(CurrentUserLevel()=='3'){
         	if($rsnew['validasi_pusat']!=$rsold['validasi_pusat']){
+        		$kode = null;
+        		$user_id = CurrentUserID();
         		if($rsnew['validasi_pusat']==1){
-        			$created_date = ExecuteScalar("SELECT created_at FROM pesantren WHERE id=".$rsold['id']);
-        			$created_date_array = explode("-",$created_date);
-        			$tahun = $created_date_array[0];
-        			$bulan = $created_date_array[1];
-        			if($rsold['id']<10){
-        				$no_urut="0000".$rsold['id'];
-        			}
-        			else if($rsold['id']<100 && $rsold['id']>9){
-        				$no_urut="000".$rsold['id'];
-        			}
-        			else if($rsold['id']<1000 && $rsold['id']>99){
-        				$no_urut="00".$rsold['id'];
-        			}
-        			else if($rsold['id']<10000 && $rsold['id']>999){
-        				$no_urut="0".$rsold['id'];
-        			}
-        			else if($rsold['id']>9999){
-        				$no_urut=$rsold['id'];
-        			}
-        			$no_anggota = $tahun."".$bulan."".$no_urut;
-        			$kondisi = "validator_pusat=".CurrentUserID().", kode=".$no_anggota;
+        			$kode = (!empty($rsold['kode'])) ? "" : getKodePesantren($rsold['propinsi']);
+        			$kode = ", kode='{$kode}'";
         		}
-        		else{
-        			$kondisi = "validator_pusat=".CurrentUserID();
-        		}
-        		$myResult = ExecuteUpdate("UPDATE pesantren SET $kondisi WHERE id=".$rsold['id']);
+        		$myResult = ExecuteUpdate("UPDATE pesantren SET validator_pusat = {$user_id} {$kode} WHERE id=".$rsold['id']);
         		//$rsnew['validator_pusat']=CurrentUserID();
         	}
         }
