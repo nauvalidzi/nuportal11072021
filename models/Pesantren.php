@@ -66,6 +66,8 @@ class Pesantren extends DbTable
     public $validator_pusat;
     public $created_at;
     public $updated_at;
+    public $tgl_validasi_cabang;
+    public $tgl_validasi_pusat;
 
     // Page ID
     public $PageID = ""; // To be overridden by subclass
@@ -210,13 +212,13 @@ class Pesantren extends DbTable
 
         // latitude
         $this->latitude = new DbField('pesantren', 'pesantren', 'x_latitude', 'latitude', '`latitude`', '`latitude`', 200, 255, -1, false, '`latitude`', false, false, false, 'FORMATTED TEXT', 'TEXT');
-        $this->latitude->Sortable = true; // Allow sort
+        $this->latitude->Sortable = false; // Allow sort
         $this->latitude->CustomMsg = $Language->FieldPhrase($this->TableVar, $this->latitude->Param, "CustomMsg");
         $this->Fields['latitude'] = &$this->latitude;
 
         // longitude
         $this->longitude = new DbField('pesantren', 'pesantren', 'x_longitude', 'longitude', '`longitude`', '`longitude`', 200, 255, -1, false, '`longitude`', false, false, false, 'FORMATTED TEXT', 'TEXT');
-        $this->longitude->Sortable = true; // Allow sort
+        $this->longitude->Sortable = false; // Allow sort
         $this->longitude->CustomMsg = $Language->FieldPhrase($this->TableVar, $this->longitude->Param, "CustomMsg");
         $this->Fields['longitude'] = &$this->longitude;
 
@@ -441,6 +443,20 @@ class Pesantren extends DbTable
         $this->updated_at->DefaultErrorMessage = str_replace("%s", $GLOBALS["DATE_FORMAT"], $Language->phrase("IncorrectDate"));
         $this->updated_at->CustomMsg = $Language->FieldPhrase($this->TableVar, $this->updated_at->Param, "CustomMsg");
         $this->Fields['updated_at'] = &$this->updated_at;
+
+        // tgl_validasi_cabang
+        $this->tgl_validasi_cabang = new DbField('pesantren', 'pesantren', 'x_tgl_validasi_cabang', 'tgl_validasi_cabang', '`tgl_validasi_cabang`', CastDateFieldForLike("`tgl_validasi_cabang`", 0, "DB"), 133, 10, 0, false, '`tgl_validasi_cabang`', false, false, false, 'FORMATTED TEXT', 'TEXT');
+        $this->tgl_validasi_cabang->Sortable = true; // Allow sort
+        $this->tgl_validasi_cabang->DefaultErrorMessage = str_replace("%s", $GLOBALS["DATE_FORMAT"], $Language->phrase("IncorrectDate"));
+        $this->tgl_validasi_cabang->CustomMsg = $Language->FieldPhrase($this->TableVar, $this->tgl_validasi_cabang->Param, "CustomMsg");
+        $this->Fields['tgl_validasi_cabang'] = &$this->tgl_validasi_cabang;
+
+        // tgl_validasi_pusat
+        $this->tgl_validasi_pusat = new DbField('pesantren', 'pesantren', 'x_tgl_validasi_pusat', 'tgl_validasi_pusat', '`tgl_validasi_pusat`', CastDateFieldForLike("`tgl_validasi_pusat`", 0, "DB"), 133, 10, 0, false, '`tgl_validasi_pusat`', false, false, false, 'FORMATTED TEXT', 'TEXT');
+        $this->tgl_validasi_pusat->Sortable = true; // Allow sort
+        $this->tgl_validasi_pusat->DefaultErrorMessage = str_replace("%s", $GLOBALS["DATE_FORMAT"], $Language->phrase("IncorrectDate"));
+        $this->tgl_validasi_pusat->CustomMsg = $Language->FieldPhrase($this->TableVar, $this->tgl_validasi_pusat->Param, "CustomMsg");
+        $this->Fields['tgl_validasi_pusat'] = &$this->tgl_validasi_pusat;
     }
 
     // Field Visibility
@@ -518,6 +534,10 @@ class Pesantren extends DbTable
         }
         if ($this->getCurrentDetailTable() == "fasilitaspesantren") {
             $detailUrl = Container("fasilitaspesantren")->getListUrl() . "?" . Config("TABLE_SHOW_MASTER") . "=" . $this->TableVar;
+            $detailUrl .= "&" . GetForeignKeyUrl("fk_id", $this->id->CurrentValue);
+        }
+        if ($this->getCurrentDetailTable() == "pendidikanpesantren") {
+            $detailUrl = Container("pendidikanpesantren")->getListUrl() . "?" . Config("TABLE_SHOW_MASTER") . "=" . $this->TableVar;
             $detailUrl .= "&" . GetForeignKeyUrl("fk_id", $this->id->CurrentValue);
         }
         if ($detailUrl == "") {
@@ -1249,6 +1269,8 @@ class Pesantren extends DbTable
         $this->validator_pusat->DbValue = $row['validator_pusat'];
         $this->created_at->DbValue = $row['created_at'];
         $this->updated_at->DbValue = $row['updated_at'];
+        $this->tgl_validasi_cabang->DbValue = $row['tgl_validasi_cabang'];
+        $this->tgl_validasi_pusat->DbValue = $row['tgl_validasi_pusat'];
     }
 
     // Delete uploaded files
@@ -1643,6 +1665,8 @@ SORTHTML;
         $this->validator_pusat->setDbValue($row['validator_pusat']);
         $this->created_at->setDbValue($row['created_at']);
         $this->updated_at->setDbValue($row['updated_at']);
+        $this->tgl_validasi_cabang->setDbValue($row['tgl_validasi_cabang']);
+        $this->tgl_validasi_pusat->setDbValue($row['tgl_validasi_pusat']);
     }
 
     // Render list row values
@@ -1680,8 +1704,10 @@ SORTHTML;
         // kodepos
 
         // latitude
+        $this->latitude->CellCssStyle = "white-space: nowrap;";
 
         // longitude
+        $this->longitude->CellCssStyle = "white-space: nowrap;";
 
         // telpon
         $this->telpon->CellCssStyle = "white-space: nowrap;";
@@ -1748,6 +1774,10 @@ SORTHTML;
         // created_at
 
         // updated_at
+
+        // tgl_validasi_cabang
+
+        // tgl_validasi_pusat
 
         // id
         $this->id->ViewValue = $this->id->CurrentValue;
@@ -2065,6 +2095,16 @@ SORTHTML;
         $this->updated_at->ViewValue = FormatDateTime($this->updated_at->ViewValue, 0);
         $this->updated_at->ViewCustomAttributes = "";
 
+        // tgl_validasi_cabang
+        $this->tgl_validasi_cabang->ViewValue = $this->tgl_validasi_cabang->CurrentValue;
+        $this->tgl_validasi_cabang->ViewValue = FormatDateTime($this->tgl_validasi_cabang->ViewValue, 0);
+        $this->tgl_validasi_cabang->ViewCustomAttributes = "";
+
+        // tgl_validasi_pusat
+        $this->tgl_validasi_pusat->ViewValue = $this->tgl_validasi_pusat->CurrentValue;
+        $this->tgl_validasi_pusat->ViewValue = FormatDateTime($this->tgl_validasi_pusat->ViewValue, 0);
+        $this->tgl_validasi_pusat->ViewCustomAttributes = "";
+
         // id
         $this->id->LinkCustomAttributes = "";
         $this->id->HrefValue = "";
@@ -2303,6 +2343,16 @@ SORTHTML;
         $this->updated_at->LinkCustomAttributes = "";
         $this->updated_at->HrefValue = "";
         $this->updated_at->TooltipValue = "";
+
+        // tgl_validasi_cabang
+        $this->tgl_validasi_cabang->LinkCustomAttributes = "";
+        $this->tgl_validasi_cabang->HrefValue = "";
+        $this->tgl_validasi_cabang->TooltipValue = "";
+
+        // tgl_validasi_pusat
+        $this->tgl_validasi_pusat->LinkCustomAttributes = "";
+        $this->tgl_validasi_pusat->HrefValue = "";
+        $this->tgl_validasi_pusat->TooltipValue = "";
 
         // Call Row Rendered event
         $this->rowRendered();
@@ -2610,6 +2660,16 @@ SORTHTML;
         $this->updated_at->EditCustomAttributes = "";
         $this->updated_at->EditValue = FormatDateTime($this->updated_at->CurrentValue, 8);
 
+        // tgl_validasi_cabang
+        $this->tgl_validasi_cabang->EditAttrs["class"] = "form-control";
+        $this->tgl_validasi_cabang->EditCustomAttributes = "";
+        $this->tgl_validasi_cabang->EditValue = FormatDateTime($this->tgl_validasi_cabang->CurrentValue, 8);
+
+        // tgl_validasi_pusat
+        $this->tgl_validasi_pusat->EditAttrs["class"] = "form-control";
+        $this->tgl_validasi_pusat->EditCustomAttributes = "";
+        $this->tgl_validasi_pusat->EditValue = FormatDateTime($this->tgl_validasi_pusat->CurrentValue, 8);
+
         // Call Row Rendered event
         $this->rowRendered();
     }
@@ -2647,8 +2707,6 @@ SORTHTML;
                     $doc->exportCaption($this->kecamatan);
                     $doc->exportCaption($this->desa);
                     $doc->exportCaption($this->kodepos);
-                    $doc->exportCaption($this->latitude);
-                    $doc->exportCaption($this->longitude);
                     $doc->exportCaption($this->telpon);
                     $doc->exportCaption($this->web);
                     $doc->exportCaption($this->_email);
@@ -2669,6 +2727,8 @@ SORTHTML;
                     $doc->exportCaption($this->validator);
                     $doc->exportCaption($this->validasi_pusat);
                     $doc->exportCaption($this->validator_pusat);
+                    $doc->exportCaption($this->tgl_validasi_cabang);
+                    $doc->exportCaption($this->tgl_validasi_pusat);
                 } else {
                     $doc->exportCaption($this->id);
                     $doc->exportCaption($this->kode);
@@ -2679,8 +2739,6 @@ SORTHTML;
                     $doc->exportCaption($this->kecamatan);
                     $doc->exportCaption($this->desa);
                     $doc->exportCaption($this->kodepos);
-                    $doc->exportCaption($this->latitude);
-                    $doc->exportCaption($this->longitude);
                     $doc->exportCaption($this->telpon);
                     $doc->exportCaption($this->web);
                     $doc->exportCaption($this->_email);
@@ -2703,6 +2761,8 @@ SORTHTML;
                     $doc->exportCaption($this->validator_pusat);
                     $doc->exportCaption($this->created_at);
                     $doc->exportCaption($this->updated_at);
+                    $doc->exportCaption($this->tgl_validasi_cabang);
+                    $doc->exportCaption($this->tgl_validasi_pusat);
                 }
                 $doc->endExportRow();
             }
@@ -2741,8 +2801,6 @@ SORTHTML;
                         $doc->exportField($this->kecamatan);
                         $doc->exportField($this->desa);
                         $doc->exportField($this->kodepos);
-                        $doc->exportField($this->latitude);
-                        $doc->exportField($this->longitude);
                         $doc->exportField($this->telpon);
                         $doc->exportField($this->web);
                         $doc->exportField($this->_email);
@@ -2763,6 +2821,8 @@ SORTHTML;
                         $doc->exportField($this->validator);
                         $doc->exportField($this->validasi_pusat);
                         $doc->exportField($this->validator_pusat);
+                        $doc->exportField($this->tgl_validasi_cabang);
+                        $doc->exportField($this->tgl_validasi_pusat);
                     } else {
                         $doc->exportField($this->id);
                         $doc->exportField($this->kode);
@@ -2773,8 +2833,6 @@ SORTHTML;
                         $doc->exportField($this->kecamatan);
                         $doc->exportField($this->desa);
                         $doc->exportField($this->kodepos);
-                        $doc->exportField($this->latitude);
-                        $doc->exportField($this->longitude);
                         $doc->exportField($this->telpon);
                         $doc->exportField($this->web);
                         $doc->exportField($this->_email);
@@ -2797,6 +2855,8 @@ SORTHTML;
                         $doc->exportField($this->validator_pusat);
                         $doc->exportField($this->created_at);
                         $doc->exportField($this->updated_at);
+                        $doc->exportField($this->tgl_validasi_cabang);
+                        $doc->exportField($this->tgl_validasi_pusat);
                     }
                     $doc->endExportRow($rowCnt);
                 }
@@ -3055,33 +3115,35 @@ SORTHTML;
     // Row Updated event
     public function rowUpdated($rsold, &$rsnew)
     {
-        //Log("Row Updated");
+         //Log("Row Updated");
         if(CurrentUserLevel()=='-1'){
-        	if($rsnew['validasi_pusat']!=$rsold['validasi_pusat']){
-        		$rsnew['validator_pusat']="-1";
-        		$kode = ($rsnew['validasi_pusat'] != 1) ? "" : ", kode = '".getKodePesantren($rsold['propinsi'])."'";
-        		$myResult = ExecuteUpdate("UPDATE pesantren SET validator_pusat=".CurrentUserID()." {$kode} WHERE id=".$rsold['id']);
-        	}
-        	if($rsnew['validasi']!=$rsold['validasi']){
-        		$rsnew['validator']="-1";
-        		$myResult = ExecuteUpdate("UPDATE pesantren SET validator=".CurrentUserID()." WHERE id=".$rsold['id']);
-        	}
+            if($rsnew['validasi_pusat']!=$rsold['validasi_pusat']){
+                $rsnew['validator_pusat']="-1";
+                $kode = null;
+                if($rsnew['validasi_pusat'] == 1){
+                    $kode = (!empty($rsold['kode'])) ? "" : ", kode='".getKodePesantren($rsold['propinsi'])."', tgl_validasi_pusat = '".date('Y-m-d')."'";
+                }
+                $myResult = ExecuteUpdate("UPDATE pesantren SET validator_pusat=".CurrentUserID()." {$kode} WHERE id=".$rsold['id']);
+            }
+            if($rsnew['validasi']!=$rsold['validasi']){
+                $rsnew['validator']="-1";
+                $myResult = ExecuteUpdate("UPDATE pesantren SET validator=".CurrentUserID().", tgl_validasi_cabang = '".date('Y-m-d')."' WHERE id=".$rsold['id']);
+            }
         } elseif(CurrentUserLevel()=='1'){
-        	if($rsnew['validasi']!=$rsold['validasi']){
-        		//$rsnew['validator']=CurrentUserID();
-        		$myResult = ExecuteUpdate("UPDATE pesantren SET validator=".CurrentUserID()." WHERE id=".$rsold['id']);
-        	}
+            if($rsnew['validasi']!=$rsold['validasi']){
+                //$rsnew['validator']=CurrentUserID();
+                $myResult = ExecuteUpdate("UPDATE pesantren SET validator=".CurrentUserID().", tgl_validasi_cabang = '".date('Y-m-d')."' WHERE id=".$rsold['id']);
+            }
         } elseif(CurrentUserLevel()=='3'){
-        	if($rsnew['validasi_pusat']!=$rsold['validasi_pusat']){
-        		$kode = null;
-        		$user_id = CurrentUserID();
-        		if($rsnew['validasi_pusat']==1){
-        			$kode = (!empty($rsold['kode'])) ? "" : getKodePesantren($rsold['propinsi']);
-        			$kode = ", kode='{$kode}'";
-        		}
-        		$myResult = ExecuteUpdate("UPDATE pesantren SET validator_pusat = {$user_id} {$kode} WHERE id=".$rsold['id']);
-        		//$rsnew['validator_pusat']=CurrentUserID();
-        	}
+            if($rsnew['validasi_pusat']!=$rsold['validasi_pusat']){
+                $kode = null;
+                $user_id = CurrentUserID();
+                if($rsnew['validasi_pusat'] == 1){
+                    $kode = (!empty($rsold['kode'])) ? "" : ", kode='".getKodePesantren($rsold['propinsi'])."', tgl_validasi_pusat = '".date('Y-m-d')."'";
+                }
+                $myResult = ExecuteUpdate("UPDATE pesantren SET validator_pusat = {$user_id} {$kode} WHERE id=".$rsold['id']);
+                //$rsnew['validator_pusat']=CurrentUserID();
+            }
         }
         $myResult = ExecuteUpdate("UPDATE pesantren SET updated_at='".date('Y-m-d H:i:s')."' WHERE id=".$rsold['id']);
        // $rsnew['updated_at']=date("Y-m-d H:i:s");

@@ -118,11 +118,26 @@ $Page->showMessage();
 <input type="hidden" name="action" id="action" value="insert">
 <input type="hidden" name="modal" value="<?= (int)$Page->IsModal ?>">
 <input type="hidden" name="<?= $Page->OldKeyName ?>" value="<?= $Page->OldKey ?>">
+<?php if ($Page->getCurrentMasterTable() == "pesantren") { ?>
+<input type="hidden" name="<?= Config("TABLE_SHOW_MASTER") ?>" value="pesantren">
+<input type="hidden" name="fk_id" value="<?= HtmlEncode($Page->pid->getSessionValue()) ?>">
+<?php } ?>
+<?php if ($Page->getCurrentMasterTable() == "jenispendidikanpesantren") { ?>
+<input type="hidden" name="<?= Config("TABLE_SHOW_MASTER") ?>" value="jenispendidikanpesantren">
+<input type="hidden" name="fk_id" value="<?= HtmlEncode($Page->idjenispp->getSessionValue()) ?>">
+<?php } ?>
 <div class="ew-add-div"><!-- page* -->
 <?php if ($Page->pid->Visible) { // pid ?>
     <div id="r_pid" class="form-group row">
         <label id="elh_pendidikanpesantren_pid" for="x_pid" class="<?= $Page->LeftColumnClass ?>"><?= $Page->pid->caption() ?><?= $Page->pid->Required ? $Language->phrase("FieldRequiredIndicator") : "" ?></label>
         <div class="<?= $Page->RightColumnClass ?>"><div <?= $Page->pid->cellAttributes() ?>>
+<?php if ($Page->pid->getSessionValue() != "") { ?>
+<span id="el_pendidikanpesantren_pid">
+<span<?= $Page->pid->viewAttributes() ?>>
+<input type="text" readonly class="form-control-plaintext" value="<?= HtmlEncode(RemoveHtml($Page->pid->getDisplayValue($Page->pid->ViewValue))) ?>"></span>
+</span>
+<input type="hidden" id="x_pid" name="x_pid" value="<?= HtmlEncode($Page->pid->CurrentValue) ?>" data-hidden="1">
+<?php } else { ?>
 <span id="el_pendidikanpesantren_pid">
     <select
         id="x_pid"
@@ -148,6 +163,7 @@ loadjs.ready("head", function() {
 });
 </script>
 </span>
+<?php } ?>
 </div></div>
     </div>
 <?php } ?>
@@ -155,6 +171,13 @@ loadjs.ready("head", function() {
     <div id="r_idjenispp" class="form-group row">
         <label id="elh_pendidikanpesantren_idjenispp" for="x_idjenispp" class="<?= $Page->LeftColumnClass ?>"><?= $Page->idjenispp->caption() ?><?= $Page->idjenispp->Required ? $Language->phrase("FieldRequiredIndicator") : "" ?></label>
         <div class="<?= $Page->RightColumnClass ?>"><div <?= $Page->idjenispp->cellAttributes() ?>>
+<?php if ($Page->idjenispp->getSessionValue() != "") { ?>
+<span id="el_pendidikanpesantren_idjenispp">
+<span<?= $Page->idjenispp->viewAttributes() ?>>
+<input type="text" readonly class="form-control-plaintext" value="<?= HtmlEncode(RemoveHtml($Page->idjenispp->getDisplayValue($Page->idjenispp->ViewValue))) ?>"></span>
+</span>
+<input type="hidden" id="x_idjenispp" name="x_idjenispp" value="<?= HtmlEncode($Page->idjenispp->CurrentValue) ?>" data-hidden="1">
+<?php } else { ?>
 <span id="el_pendidikanpesantren_idjenispp">
     <select
         id="x_idjenispp"
@@ -180,6 +203,7 @@ loadjs.ready("head", function() {
 });
 </script>
 </span>
+<?php } ?>
 </div></div>
     </div>
 <?php } ?>

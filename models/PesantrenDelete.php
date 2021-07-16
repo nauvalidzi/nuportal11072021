@@ -412,6 +412,8 @@ class PesantrenDelete extends Pesantren
         $this->validator_pusat->setVisibility();
         $this->created_at->Visible = false;
         $this->updated_at->Visible = false;
+        $this->tgl_validasi_cabang->Visible = false;
+        $this->tgl_validasi_pusat->Visible = false;
         $this->hideFieldsForAddEdit();
 
         // Do not use lookup cache
@@ -642,6 +644,8 @@ class PesantrenDelete extends Pesantren
         $this->validator_pusat->setDbValue($row['validator_pusat']);
         $this->created_at->setDbValue($row['created_at']);
         $this->updated_at->setDbValue($row['updated_at']);
+        $this->tgl_validasi_cabang->setDbValue($row['tgl_validasi_cabang']);
+        $this->tgl_validasi_pusat->setDbValue($row['tgl_validasi_pusat']);
     }
 
     // Return a row with default values
@@ -686,6 +690,8 @@ class PesantrenDelete extends Pesantren
         $row['validator_pusat'] = null;
         $row['created_at'] = null;
         $row['updated_at'] = null;
+        $row['tgl_validasi_cabang'] = null;
+        $row['tgl_validasi_pusat'] = null;
         return $row;
     }
 
@@ -726,8 +732,10 @@ class PesantrenDelete extends Pesantren
         // kodepos
 
         // latitude
+        $this->latitude->CellCssStyle = "white-space: nowrap;";
 
         // longitude
+        $this->longitude->CellCssStyle = "white-space: nowrap;";
 
         // telpon
         $this->telpon->CellCssStyle = "white-space: nowrap;";
@@ -794,6 +802,10 @@ class PesantrenDelete extends Pesantren
         // created_at
 
         // updated_at
+
+        // tgl_validasi_cabang
+
+        // tgl_validasi_pusat
         if ($this->RowType == ROWTYPE_VIEW) {
             // id
             $this->id->ViewValue = $this->id->CurrentValue;
@@ -898,14 +910,6 @@ class PesantrenDelete extends Pesantren
             // kodepos
             $this->kodepos->ViewValue = $this->kodepos->CurrentValue;
             $this->kodepos->ViewCustomAttributes = "";
-
-            // latitude
-            $this->latitude->ViewValue = $this->latitude->CurrentValue;
-            $this->latitude->ViewCustomAttributes = "";
-
-            // longitude
-            $this->longitude->ViewValue = $this->longitude->CurrentValue;
-            $this->longitude->ViewCustomAttributes = "";
 
             // telpon
             $this->telpon->ViewValue = $this->telpon->CurrentValue;
@@ -1089,6 +1093,16 @@ class PesantrenDelete extends Pesantren
             $this->updated_at->ViewValue = $this->updated_at->CurrentValue;
             $this->updated_at->ViewValue = FormatDateTime($this->updated_at->ViewValue, 0);
             $this->updated_at->ViewCustomAttributes = "";
+
+            // tgl_validasi_cabang
+            $this->tgl_validasi_cabang->ViewValue = $this->tgl_validasi_cabang->CurrentValue;
+            $this->tgl_validasi_cabang->ViewValue = FormatDateTime($this->tgl_validasi_cabang->ViewValue, 0);
+            $this->tgl_validasi_cabang->ViewCustomAttributes = "";
+
+            // tgl_validasi_pusat
+            $this->tgl_validasi_pusat->ViewValue = $this->tgl_validasi_pusat->CurrentValue;
+            $this->tgl_validasi_pusat->ViewValue = FormatDateTime($this->tgl_validasi_pusat->ViewValue, 0);
+            $this->tgl_validasi_pusat->ViewCustomAttributes = "";
 
             // kode
             $this->kode->LinkCustomAttributes = "";

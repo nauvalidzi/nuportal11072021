@@ -401,6 +401,9 @@ class PendidikanpesantrenDelete extends Pendidikanpesantren
         $this->setupLookupOptions($this->pid);
         $this->setupLookupOptions($this->idjenispp);
 
+        // Set up master/detail parameters
+        $this->setupMasterParms();
+
         // Set up Breadcrumb
         $this->setupBreadcrumb();
 
@@ -819,6 +822,108 @@ class PendidikanpesantrenDelete extends Pendidikanpesantren
             WriteJson(["success" => true, $this->TableVar => $row]);
         }
         return $deleteRows;
+    }
+
+    // Set up master/detail based on QueryString
+    protected function setupMasterParms()
+    {
+        $validMaster = false;
+        // Get the keys for master table
+        if (($master = Get(Config("TABLE_SHOW_MASTER"), Get(Config("TABLE_MASTER")))) !== null) {
+            $masterTblVar = $master;
+            if ($masterTblVar == "") {
+                $validMaster = true;
+                $this->DbMasterFilter = "";
+                $this->DbDetailFilter = "";
+            }
+            if ($masterTblVar == "pesantren") {
+                $validMaster = true;
+                $masterTbl = Container("pesantren");
+                if (($parm = Get("fk_id", Get("pid"))) !== null) {
+                    $masterTbl->id->setQueryStringValue($parm);
+                    $this->pid->setQueryStringValue($masterTbl->id->QueryStringValue);
+                    $this->pid->setSessionValue($this->pid->QueryStringValue);
+                    if (!is_numeric($masterTbl->id->QueryStringValue)) {
+                        $validMaster = false;
+                    }
+                } else {
+                    $validMaster = false;
+                }
+            }
+            if ($masterTblVar == "jenispendidikanpesantren") {
+                $validMaster = true;
+                $masterTbl = Container("jenispendidikanpesantren");
+                if (($parm = Get("fk_id", Get("idjenispp"))) !== null) {
+                    $masterTbl->id->setQueryStringValue($parm);
+                    $this->idjenispp->setQueryStringValue($masterTbl->id->QueryStringValue);
+                    $this->idjenispp->setSessionValue($this->idjenispp->QueryStringValue);
+                    if (!is_numeric($masterTbl->id->QueryStringValue)) {
+                        $validMaster = false;
+                    }
+                } else {
+                    $validMaster = false;
+                }
+            }
+        } elseif (($master = Post(Config("TABLE_SHOW_MASTER"), Post(Config("TABLE_MASTER")))) !== null) {
+            $masterTblVar = $master;
+            if ($masterTblVar == "") {
+                    $validMaster = true;
+                    $this->DbMasterFilter = "";
+                    $this->DbDetailFilter = "";
+            }
+            if ($masterTblVar == "pesantren") {
+                $validMaster = true;
+                $masterTbl = Container("pesantren");
+                if (($parm = Post("fk_id", Post("pid"))) !== null) {
+                    $masterTbl->id->setFormValue($parm);
+                    $this->pid->setFormValue($masterTbl->id->FormValue);
+                    $this->pid->setSessionValue($this->pid->FormValue);
+                    if (!is_numeric($masterTbl->id->FormValue)) {
+                        $validMaster = false;
+                    }
+                } else {
+                    $validMaster = false;
+                }
+            }
+            if ($masterTblVar == "jenispendidikanpesantren") {
+                $validMaster = true;
+                $masterTbl = Container("jenispendidikanpesantren");
+                if (($parm = Post("fk_id", Post("idjenispp"))) !== null) {
+                    $masterTbl->id->setFormValue($parm);
+                    $this->idjenispp->setFormValue($masterTbl->id->FormValue);
+                    $this->idjenispp->setSessionValue($this->idjenispp->FormValue);
+                    if (!is_numeric($masterTbl->id->FormValue)) {
+                        $validMaster = false;
+                    }
+                } else {
+                    $validMaster = false;
+                }
+            }
+        }
+        if ($validMaster) {
+            // Save current master table
+            $this->setCurrentMasterTable($masterTblVar);
+
+            // Reset start record counter (new master key)
+            if (!$this->isAddOrEdit()) {
+                $this->StartRecord = 1;
+                $this->setStartRecordNumber($this->StartRecord);
+            }
+
+            // Clear previous master key from Session
+            if ($masterTblVar != "pesantren") {
+                if ($this->pid->CurrentValue == "") {
+                    $this->pid->setSessionValue("");
+                }
+            }
+            if ($masterTblVar != "jenispendidikanpesantren") {
+                if ($this->idjenispp->CurrentValue == "") {
+                    $this->idjenispp->setSessionValue("");
+                }
+            }
+        }
+        $this->DbMasterFilter = $this->getMasterFilter(); // Get master filter
+        $this->DbDetailFilter = $this->getDetailFilter(); // Get detail filter
     }
 
     // Set up Breadcrumb

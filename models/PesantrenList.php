@@ -606,6 +606,8 @@ class PesantrenList extends Pesantren
         $this->validator_pusat->setVisibility();
         $this->created_at->Visible = false;
         $this->updated_at->Visible = false;
+        $this->tgl_validasi_cabang->Visible = false;
+        $this->tgl_validasi_pusat->Visible = false;
         $this->hideFieldsForAddEdit();
 
         // Global Page Loading event (in userfn*.php)
@@ -938,6 +940,8 @@ class PesantrenList extends Pesantren
                 $this->validator_pusat->setSort("");
                 $this->created_at->setSort("");
                 $this->updated_at->setSort("");
+                $this->tgl_validasi_cabang->setSort("");
+                $this->tgl_validasi_pusat->setSort("");
             }
 
             // Reset start position
@@ -1011,6 +1015,13 @@ class PesantrenList extends Pesantren
         $item->OnLeft = true;
         $item->ShowInButtonGroup = false;
 
+        // "detail_pendidikanpesantren"
+        $item = &$this->ListOptions->add("detail_pendidikanpesantren");
+        $item->CssClass = "text-nowrap";
+        $item->Visible = $Security->allowList(CurrentProjectID() . 'pendidikanpesantren') && !$this->ShowMultipleDetails;
+        $item->OnLeft = true;
+        $item->ShowInButtonGroup = false;
+
         // Multiple details
         if ($this->ShowMultipleDetails) {
             $item = &$this->ListOptions->add("details");
@@ -1028,6 +1039,7 @@ class PesantrenList extends Pesantren
         $pages->add("pengasuhppwanita");
         $pages->add("kitabkuning");
         $pages->add("fasilitaspesantren");
+        $pages->add("pendidikanpesantren");
         $this->DetailPages = $pages;
 
         // List actions
@@ -1342,6 +1354,42 @@ class PesantrenList extends Pesantren
                 $opt->Visible = false;
             }
         }
+
+        // "detail_pendidikanpesantren"
+        $opt = $this->ListOptions["detail_pendidikanpesantren"];
+        if ($Security->allowList(CurrentProjectID() . 'pendidikanpesantren') && $this->showOptionLink()) {
+            $body = $Language->phrase("DetailLink") . $Language->TablePhrase("pendidikanpesantren", "TblCaption");
+            $body = "<a class=\"btn btn-default ew-row-link ew-detail\" data-action=\"list\" href=\"" . HtmlEncode("PendidikanpesantrenList?" . Config("TABLE_SHOW_MASTER") . "=pesantren&" . GetForeignKeyUrl("fk_id", $this->id->CurrentValue) . "") . "\">" . $body . "</a>";
+            $links = "";
+            $detailPage = Container("PendidikanpesantrenGrid");
+            if ($detailPage->DetailView && $Security->canView() && $this->showOptionLink("view") && $Security->allowView(CurrentProjectID() . 'pesantren')) {
+                $caption = $Language->phrase("MasterDetailViewLink");
+                $url = $this->getViewUrl(Config("TABLE_SHOW_DETAIL") . "=pendidikanpesantren");
+                $links .= "<li><a class=\"dropdown-item ew-row-link ew-detail-view\" data-action=\"view\" data-caption=\"" . HtmlTitle($caption) . "\" href=\"" . HtmlEncode($url) . "\">" . HtmlImageAndText($caption) . "</a></li>";
+                if ($detailViewTblVar != "") {
+                    $detailViewTblVar .= ",";
+                }
+                $detailViewTblVar .= "pendidikanpesantren";
+            }
+            if ($detailPage->DetailEdit && $Security->canEdit() && $this->showOptionLink("edit") && $Security->allowEdit(CurrentProjectID() . 'pesantren')) {
+                $caption = $Language->phrase("MasterDetailEditLink");
+                $url = $this->getEditUrl(Config("TABLE_SHOW_DETAIL") . "=pendidikanpesantren");
+                $links .= "<li><a class=\"dropdown-item ew-row-link ew-detail-edit\" data-action=\"edit\" data-caption=\"" . HtmlTitle($caption) . "\" href=\"" . HtmlEncode($url) . "\">" . HtmlImageAndText($caption) . "</a></li>";
+                if ($detailEditTblVar != "") {
+                    $detailEditTblVar .= ",";
+                }
+                $detailEditTblVar .= "pendidikanpesantren";
+            }
+            if ($links != "") {
+                $body .= "<button class=\"dropdown-toggle btn btn-default ew-detail\" data-toggle=\"dropdown\"></button>";
+                $body .= "<ul class=\"dropdown-menu\">" . $links . "</ul>";
+            }
+            $body = "<div class=\"btn-group btn-group-sm ew-btn-group\">" . $body . "</div>";
+            $opt->Body = $body;
+            if ($this->ShowMultipleDetails) {
+                $opt->Visible = false;
+            }
+        }
         if ($this->ShowMultipleDetails) {
             $body = "<div class=\"btn-group btn-group-sm ew-btn-group\">";
             $links = "";
@@ -1458,6 +1506,18 @@ class PesantrenList extends Pesantren
                         $detailTableLink .= ",";
                     }
                     $detailTableLink .= "fasilitaspesantren";
+                }
+                $item = &$option->add("detailadd_pendidikanpesantren");
+                $url = $this->getAddUrl(Config("TABLE_SHOW_DETAIL") . "=pendidikanpesantren");
+                $detailPage = Container("PendidikanpesantrenGrid");
+                $caption = $Language->phrase("Add") . "&nbsp;" . $this->tableCaption() . "/" . $detailPage->tableCaption();
+                $item->Body = "<a class=\"ew-detail-add-group ew-detail-add\" title=\"" . HtmlTitle($caption) . "\" data-caption=\"" . HtmlTitle($caption) . "\" href=\"" . HtmlEncode(GetUrl($url)) . "\">" . $caption . "</a>";
+                $item->Visible = ($detailPage->DetailAdd && $Security->allowAdd(CurrentProjectID() . 'pesantren') && $Security->canAdd());
+                if ($item->Visible) {
+                    if ($detailTableLink != "") {
+                        $detailTableLink .= ",";
+                    }
+                    $detailTableLink .= "pendidikanpesantren";
                 }
 
         // Add multiple details
@@ -1829,6 +1889,38 @@ class PesantrenList extends Pesantren
                 $option->Body .= "<div class=\"d-none ew-preview\">" . $link . $btngrp . "</div>";
             }
         }
+        $sqlwrk = "`pid`=" . AdjustSql($this->id->CurrentValue, $this->Dbid) . "";
+
+        // Column "detail_pendidikanpesantren"
+        if ($this->DetailPages && $this->DetailPages["pendidikanpesantren"] && $this->DetailPages["pendidikanpesantren"]->Visible) {
+            $link = "";
+            $option = $this->ListOptions["detail_pendidikanpesantren"];
+            $url = "PendidikanpesantrenPreview?t=pesantren&f=" . Encrypt($sqlwrk);
+            $btngrp = "<div data-table=\"pendidikanpesantren\" data-url=\"" . $url . "\">";
+            if ($Security->allowList(CurrentProjectID() . 'pesantren')) {
+                $label = $Language->TablePhrase("pendidikanpesantren", "TblCaption");
+                $link = "<li class=\"nav-item\"><a href=\"#\" class=\"nav-link\" data-toggle=\"tab\" data-table=\"pendidikanpesantren\" data-url=\"" . $url . "\">" . $label . "</a></li>";
+                $links .= $link;
+                $detaillnk = JsEncodeAttribute("PendidikanpesantrenList?" . Config("TABLE_SHOW_MASTER") . "=pesantren&" . GetForeignKeyUrl("fk_id", $this->id->CurrentValue) . "");
+                $btngrp .= "<a href=\"#\" class=\"mr-2\" title=\"" . $Language->TablePhrase("pendidikanpesantren", "TblCaption") . "\" onclick=\"window.location='" . $detaillnk . "';return false;\">" . $Language->phrase("MasterDetailListLink") . "</a>";
+            }
+            $detailPageObj = Container("PendidikanpesantrenGrid");
+            if ($detailPageObj->DetailView && $Security->canView() && $this->showOptionLink("view") && $Security->allowView(CurrentProjectID() . 'pesantren')) {
+                $caption = $Language->phrase("MasterDetailViewLink");
+                $url = $this->getViewUrl(Config("TABLE_SHOW_DETAIL") . "=pendidikanpesantren");
+                $btngrp .= "<a href=\"#\" class=\"mr-2\" title=\"" . HtmlTitle($caption) . "\" onclick=\"window.location='" . HtmlEncode($url) . "';return false;\">" . $caption . "</a>";
+            }
+            if ($detailPageObj->DetailEdit && $Security->canEdit() && $this->showOptionLink("edit") && $Security->allowEdit(CurrentProjectID() . 'pesantren')) {
+                $caption = $Language->phrase("MasterDetailEditLink");
+                $url = $this->getEditUrl(Config("TABLE_SHOW_DETAIL") . "=pendidikanpesantren");
+                $btngrp .= "<a href=\"#\" class=\"mr-2\" title=\"" . HtmlTitle($caption) . "\" onclick=\"window.location='" . HtmlEncode($url) . "';return false;\">" . $caption . "</a>";
+            }
+            $btngrp .= "</div>";
+            if ($link != "") {
+                $btngrps .= $btngrp;
+                $option->Body .= "<div class=\"d-none ew-preview\">" . $link . $btngrp . "</div>";
+            }
+        }
 
         // Hide detail items if necessary
         $this->ListOptions->hideDetailItemsForDropDown();
@@ -1975,6 +2067,8 @@ class PesantrenList extends Pesantren
         $this->validator_pusat->setDbValue($row['validator_pusat']);
         $this->created_at->setDbValue($row['created_at']);
         $this->updated_at->setDbValue($row['updated_at']);
+        $this->tgl_validasi_cabang->setDbValue($row['tgl_validasi_cabang']);
+        $this->tgl_validasi_pusat->setDbValue($row['tgl_validasi_pusat']);
     }
 
     // Return a row with default values
@@ -2019,6 +2113,8 @@ class PesantrenList extends Pesantren
         $row['validator_pusat'] = null;
         $row['created_at'] = null;
         $row['updated_at'] = null;
+        $row['tgl_validasi_cabang'] = null;
+        $row['tgl_validasi_pusat'] = null;
         return $row;
     }
 
@@ -2081,8 +2177,10 @@ class PesantrenList extends Pesantren
         // kodepos
 
         // latitude
+        $this->latitude->CellCssStyle = "white-space: nowrap;";
 
         // longitude
+        $this->longitude->CellCssStyle = "white-space: nowrap;";
 
         // telpon
         $this->telpon->CellCssStyle = "white-space: nowrap;";
@@ -2149,6 +2247,10 @@ class PesantrenList extends Pesantren
         // created_at
 
         // updated_at
+
+        // tgl_validasi_cabang
+
+        // tgl_validasi_pusat
         if ($this->RowType == ROWTYPE_VIEW) {
             // id
             $this->id->ViewValue = $this->id->CurrentValue;
@@ -2253,14 +2355,6 @@ class PesantrenList extends Pesantren
             // kodepos
             $this->kodepos->ViewValue = $this->kodepos->CurrentValue;
             $this->kodepos->ViewCustomAttributes = "";
-
-            // latitude
-            $this->latitude->ViewValue = $this->latitude->CurrentValue;
-            $this->latitude->ViewCustomAttributes = "";
-
-            // longitude
-            $this->longitude->ViewValue = $this->longitude->CurrentValue;
-            $this->longitude->ViewCustomAttributes = "";
 
             // telpon
             $this->telpon->ViewValue = $this->telpon->CurrentValue;
@@ -2444,6 +2538,16 @@ class PesantrenList extends Pesantren
             $this->updated_at->ViewValue = $this->updated_at->CurrentValue;
             $this->updated_at->ViewValue = FormatDateTime($this->updated_at->ViewValue, 0);
             $this->updated_at->ViewCustomAttributes = "";
+
+            // tgl_validasi_cabang
+            $this->tgl_validasi_cabang->ViewValue = $this->tgl_validasi_cabang->CurrentValue;
+            $this->tgl_validasi_cabang->ViewValue = FormatDateTime($this->tgl_validasi_cabang->ViewValue, 0);
+            $this->tgl_validasi_cabang->ViewCustomAttributes = "";
+
+            // tgl_validasi_pusat
+            $this->tgl_validasi_pusat->ViewValue = $this->tgl_validasi_pusat->CurrentValue;
+            $this->tgl_validasi_pusat->ViewValue = FormatDateTime($this->tgl_validasi_pusat->ViewValue, 0);
+            $this->tgl_validasi_pusat->ViewCustomAttributes = "";
 
             // kode
             $this->kode->LinkCustomAttributes = "";

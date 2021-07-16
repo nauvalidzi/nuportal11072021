@@ -77,6 +77,22 @@ loadjs.ready("head", function () {
 <div class="clearfix"></div>
 </div>
 <?php } ?>
+<?php if (!$Page->isExport() || Config("EXPORT_MASTER_RECORD") && $Page->isExport("print")) { ?>
+<?php
+if ($Page->DbMasterFilter != "" && $Page->getCurrentMasterTable() == "pesantren") {
+    if ($Page->MasterRecordExists) {
+        include_once "views/PesantrenMaster.php";
+    }
+}
+?>
+<?php
+if ($Page->DbMasterFilter != "" && $Page->getCurrentMasterTable() == "jenispendidikanpesantren") {
+    if ($Page->MasterRecordExists) {
+        include_once "views/JenispendidikanpesantrenMaster.php";
+    }
+}
+?>
+<?php } ?>
 <?php
 $Page->renderOtherOptions();
 ?>
@@ -120,6 +136,14 @@ $Page->showMessage();
 <input type="hidden" name="<?= $TokenValueKey ?>" value="<?= $TokenValue ?>"><!-- CSRF token value -->
 <?php } ?>
 <input type="hidden" name="t" value="pendidikanpesantren">
+<?php if ($Page->getCurrentMasterTable() == "pesantren" && $Page->CurrentAction) { ?>
+<input type="hidden" name="<?= Config("TABLE_SHOW_MASTER") ?>" value="pesantren">
+<input type="hidden" name="fk_id" value="<?= HtmlEncode($Page->pid->getSessionValue()) ?>">
+<?php } ?>
+<?php if ($Page->getCurrentMasterTable() == "jenispendidikanpesantren" && $Page->CurrentAction) { ?>
+<input type="hidden" name="<?= Config("TABLE_SHOW_MASTER") ?>" value="jenispendidikanpesantren">
+<input type="hidden" name="fk_id" value="<?= HtmlEncode($Page->idjenispp->getSessionValue()) ?>">
+<?php } ?>
 <div id="gmp_pendidikanpesantren" class="<?= ResponsiveTableClass() ?>card-body ew-grid-middle-panel">
 <?php if ($Page->TotalRecords > 0 || $Page->isGridEdit()) { ?>
 <table id="tbl_pendidikanpesantrenlist" class="table ew-table"><!-- .ew-table -->

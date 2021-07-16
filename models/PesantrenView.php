@@ -556,6 +556,8 @@ class PesantrenView extends Pesantren
         $this->validator_pusat->setVisibility();
         $this->created_at->setVisibility();
         $this->updated_at->setVisibility();
+        $this->tgl_validasi_cabang->setVisibility();
+        $this->tgl_validasi_pusat->setVisibility();
         $this->hideFieldsForAddEdit();
 
         // Do not use lookup cache
@@ -939,6 +941,43 @@ class PesantrenView extends Pesantren
             $item->Visible = false;
         }
 
+        // "detail_pendidikanpesantren"
+        $item = &$option->add("detail_pendidikanpesantren");
+        $body = $Language->phrase("ViewPageDetailLink") . $Language->TablePhrase("pendidikanpesantren", "TblCaption");
+        $body = "<a class=\"btn btn-default ew-row-link ew-detail\" data-action=\"list\" href=\"" . HtmlEncode(GetUrl("PendidikanpesantrenList?" . Config("TABLE_SHOW_MASTER") . "=pesantren&" . GetForeignKeyUrl("fk_id", $this->id->CurrentValue) . "")) . "\">" . $body . "</a>";
+        $links = "";
+        $detailPageObj = Container("PendidikanpesantrenGrid");
+        if ($detailPageObj->DetailView && $Security->canView() && $Security->allowView(CurrentProjectID() . 'pesantren')) {
+            $links .= "<li><a class=\"dropdown-item ew-row-link ew-detail-view\" data-action=\"view\" data-caption=\"" . HtmlTitle($Language->phrase("MasterDetailViewLink")) . "\" href=\"" . HtmlEncode(GetUrl($this->getViewUrl(Config("TABLE_SHOW_DETAIL") . "=pendidikanpesantren"))) . "\">" . HtmlImageAndText($Language->phrase("MasterDetailViewLink")) . "</a></li>";
+            if ($detailViewTblVar != "") {
+                $detailViewTblVar .= ",";
+            }
+            $detailViewTblVar .= "pendidikanpesantren";
+        }
+        if ($detailPageObj->DetailEdit && $Security->canEdit() && $Security->allowEdit(CurrentProjectID() . 'pesantren')) {
+            $links .= "<li><a class=\"dropdown-item ew-row-link ew-detail-edit\" data-action=\"edit\" data-caption=\"" . HtmlTitle($Language->phrase("MasterDetailEditLink")) . "\" href=\"" . HtmlEncode(GetUrl($this->getEditUrl(Config("TABLE_SHOW_DETAIL") . "=pendidikanpesantren"))) . "\">" . HtmlImageAndText($Language->phrase("MasterDetailEditLink")) . "</a></li>";
+            if ($detailEditTblVar != "") {
+                $detailEditTblVar .= ",";
+            }
+            $detailEditTblVar .= "pendidikanpesantren";
+        }
+        if ($links != "") {
+            $body .= "<button class=\"dropdown-toggle btn btn-default ew-detail\" data-toggle=\"dropdown\"></button>";
+            $body .= "<ul class=\"dropdown-menu\">" . $links . "</ul>";
+        }
+        $body = "<div class=\"btn-group btn-group-sm ew-btn-group\">" . $body . "</div>";
+        $item->Body = $body;
+        $item->Visible = $Security->allowList(CurrentProjectID() . 'pendidikanpesantren');
+        if ($item->Visible) {
+            if ($detailTableLink != "") {
+                $detailTableLink .= ",";
+            }
+            $detailTableLink .= "pendidikanpesantren";
+        }
+        if ($this->ShowMultipleDetails) {
+            $item->Visible = false;
+        }
+
         // Multiple details
         if ($this->ShowMultipleDetails) {
             $body = "<div class=\"btn-group btn-group-sm ew-btn-group\">";
@@ -1072,6 +1111,8 @@ class PesantrenView extends Pesantren
         $this->validator_pusat->setDbValue($row['validator_pusat']);
         $this->created_at->setDbValue($row['created_at']);
         $this->updated_at->setDbValue($row['updated_at']);
+        $this->tgl_validasi_cabang->setDbValue($row['tgl_validasi_cabang']);
+        $this->tgl_validasi_pusat->setDbValue($row['tgl_validasi_pusat']);
     }
 
     // Return a row with default values
@@ -1116,6 +1157,8 @@ class PesantrenView extends Pesantren
         $row['validator_pusat'] = null;
         $row['created_at'] = null;
         $row['updated_at'] = null;
+        $row['tgl_validasi_cabang'] = null;
+        $row['tgl_validasi_pusat'] = null;
         return $row;
     }
 
@@ -1212,6 +1255,10 @@ class PesantrenView extends Pesantren
         // created_at
 
         // updated_at
+
+        // tgl_validasi_cabang
+
+        // tgl_validasi_pusat
         if ($this->RowType == ROWTYPE_VIEW) {
             // id
             $this->id->ViewValue = $this->id->CurrentValue;
@@ -1320,14 +1367,6 @@ class PesantrenView extends Pesantren
             // kodepos
             $this->kodepos->ViewValue = $this->kodepos->CurrentValue;
             $this->kodepos->ViewCustomAttributes = "";
-
-            // latitude
-            $this->latitude->ViewValue = $this->latitude->CurrentValue;
-            $this->latitude->ViewCustomAttributes = "";
-
-            // longitude
-            $this->longitude->ViewValue = $this->longitude->CurrentValue;
-            $this->longitude->ViewCustomAttributes = "";
 
             // telpon
             $this->telpon->ViewValue = $this->telpon->CurrentValue;
@@ -1512,6 +1551,16 @@ class PesantrenView extends Pesantren
             $this->updated_at->ViewValue = FormatDateTime($this->updated_at->ViewValue, 0);
             $this->updated_at->ViewCustomAttributes = "";
 
+            // tgl_validasi_cabang
+            $this->tgl_validasi_cabang->ViewValue = $this->tgl_validasi_cabang->CurrentValue;
+            $this->tgl_validasi_cabang->ViewValue = FormatDateTime($this->tgl_validasi_cabang->ViewValue, 0);
+            $this->tgl_validasi_cabang->ViewCustomAttributes = "";
+
+            // tgl_validasi_pusat
+            $this->tgl_validasi_pusat->ViewValue = $this->tgl_validasi_pusat->CurrentValue;
+            $this->tgl_validasi_pusat->ViewValue = FormatDateTime($this->tgl_validasi_pusat->ViewValue, 0);
+            $this->tgl_validasi_pusat->ViewCustomAttributes = "";
+
             // kode
             $this->kode->LinkCustomAttributes = "";
             $this->kode->HrefValue = "";
@@ -1556,16 +1605,6 @@ class PesantrenView extends Pesantren
             $this->kodepos->LinkCustomAttributes = "";
             $this->kodepos->HrefValue = "";
             $this->kodepos->TooltipValue = "";
-
-            // latitude
-            $this->latitude->LinkCustomAttributes = "";
-            $this->latitude->HrefValue = "";
-            $this->latitude->TooltipValue = "";
-
-            // longitude
-            $this->longitude->LinkCustomAttributes = "";
-            $this->longitude->HrefValue = "";
-            $this->longitude->TooltipValue = "";
 
             // telpon
             $this->telpon->LinkCustomAttributes = "";
@@ -1715,6 +1754,16 @@ class PesantrenView extends Pesantren
             $this->validator_pusat->LinkCustomAttributes = "";
             $this->validator_pusat->HrefValue = "";
             $this->validator_pusat->TooltipValue = "";
+
+            // tgl_validasi_cabang
+            $this->tgl_validasi_cabang->LinkCustomAttributes = "";
+            $this->tgl_validasi_cabang->HrefValue = "";
+            $this->tgl_validasi_cabang->TooltipValue = "";
+
+            // tgl_validasi_pusat
+            $this->tgl_validasi_pusat->LinkCustomAttributes = "";
+            $this->tgl_validasi_pusat->HrefValue = "";
+            $this->tgl_validasi_pusat->TooltipValue = "";
         }
 
         // Call Row Rendered event
@@ -1821,6 +1870,20 @@ class PesantrenView extends Pesantren
                     $detailPageObj->pid->IsDetailKey = true;
                     $detailPageObj->pid->CurrentValue = $this->id->CurrentValue;
                     $detailPageObj->pid->setSessionValue($detailPageObj->pid->CurrentValue);
+                }
+            }
+            if (in_array("pendidikanpesantren", $detailTblVar)) {
+                $detailPageObj = Container("PendidikanpesantrenGrid");
+                if ($detailPageObj->DetailView) {
+                    $detailPageObj->CurrentMode = "view";
+
+                    // Save current master table to detail table
+                    $detailPageObj->setCurrentMasterTable($this->TableVar);
+                    $detailPageObj->setStartRecordNumber(1);
+                    $detailPageObj->pid->IsDetailKey = true;
+                    $detailPageObj->pid->CurrentValue = $this->id->CurrentValue;
+                    $detailPageObj->pid->setSessionValue($detailPageObj->pid->CurrentValue);
+                    $detailPageObj->idjenispp->setSessionValue(""); // Clear session key
                 }
             }
         }

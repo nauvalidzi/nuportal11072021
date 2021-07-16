@@ -474,8 +474,8 @@ class PesantrenAdd extends Pesantren
         $this->kecamatan->setVisibility();
         $this->desa->setVisibility();
         $this->kodepos->setVisibility();
-        $this->latitude->setVisibility();
-        $this->longitude->setVisibility();
+        $this->latitude->Visible = false;
+        $this->longitude->Visible = false;
         $this->telpon->setVisibility();
         $this->web->setVisibility();
         $this->_email->setVisibility();
@@ -502,6 +502,8 @@ class PesantrenAdd extends Pesantren
         $this->validator_pusat->Visible = false;
         $this->created_at->Visible = false;
         $this->updated_at->Visible = false;
+        $this->tgl_validasi_cabang->Visible = false;
+        $this->tgl_validasi_pusat->Visible = false;
         $this->hideFieldsForAddEdit();
 
         // Do not use lookup cache
@@ -753,6 +755,10 @@ class PesantrenAdd extends Pesantren
         $this->validator_pusat->CurrentValue = 0;
         $this->created_at->CurrentValue = date("Y-m-d H:i:s");
         $this->updated_at->CurrentValue = date("Y-m-d H:i:s");
+        $this->tgl_validasi_cabang->CurrentValue = null;
+        $this->tgl_validasi_cabang->OldValue = $this->tgl_validasi_cabang->CurrentValue;
+        $this->tgl_validasi_pusat->CurrentValue = null;
+        $this->tgl_validasi_pusat->OldValue = $this->tgl_validasi_pusat->CurrentValue;
     }
 
     // Load form values
@@ -848,26 +854,6 @@ class PesantrenAdd extends Pesantren
                 $this->kodepos->Visible = false; // Disable update for API request
             } else {
                 $this->kodepos->setFormValue($val);
-            }
-        }
-
-        // Check field name 'latitude' first before field var 'x_latitude'
-        $val = $CurrentForm->hasValue("latitude") ? $CurrentForm->getValue("latitude") : $CurrentForm->getValue("x_latitude");
-        if (!$this->latitude->IsDetailKey) {
-            if (IsApi() && $val === null) {
-                $this->latitude->Visible = false; // Disable update for API request
-            } else {
-                $this->latitude->setFormValue($val);
-            }
-        }
-
-        // Check field name 'longitude' first before field var 'x_longitude'
-        $val = $CurrentForm->hasValue("longitude") ? $CurrentForm->getValue("longitude") : $CurrentForm->getValue("x_longitude");
-        if (!$this->longitude->IsDetailKey) {
-            if (IsApi() && $val === null) {
-                $this->longitude->Visible = false; // Disable update for API request
-            } else {
-                $this->longitude->setFormValue($val);
             }
         }
 
@@ -1012,8 +998,6 @@ class PesantrenAdd extends Pesantren
         $this->kecamatan->CurrentValue = $this->kecamatan->FormValue;
         $this->desa->CurrentValue = $this->desa->FormValue;
         $this->kodepos->CurrentValue = $this->kodepos->FormValue;
-        $this->latitude->CurrentValue = $this->latitude->FormValue;
-        $this->longitude->CurrentValue = $this->longitude->FormValue;
         $this->telpon->CurrentValue = $this->telpon->FormValue;
         $this->web->CurrentValue = $this->web->FormValue;
         $this->_email->CurrentValue = $this->_email->FormValue;
@@ -1129,6 +1113,8 @@ class PesantrenAdd extends Pesantren
         $this->validator_pusat->setDbValue($row['validator_pusat']);
         $this->created_at->setDbValue($row['created_at']);
         $this->updated_at->setDbValue($row['updated_at']);
+        $this->tgl_validasi_cabang->setDbValue($row['tgl_validasi_cabang']);
+        $this->tgl_validasi_pusat->setDbValue($row['tgl_validasi_pusat']);
     }
 
     // Return a row with default values
@@ -1174,6 +1160,8 @@ class PesantrenAdd extends Pesantren
         $row['validator_pusat'] = $this->validator_pusat->CurrentValue;
         $row['created_at'] = $this->created_at->CurrentValue;
         $row['updated_at'] = $this->updated_at->CurrentValue;
+        $row['tgl_validasi_cabang'] = $this->tgl_validasi_cabang->CurrentValue;
+        $row['tgl_validasi_pusat'] = $this->tgl_validasi_pusat->CurrentValue;
         return $row;
     }
 
@@ -1280,6 +1268,10 @@ class PesantrenAdd extends Pesantren
         // created_at
 
         // updated_at
+
+        // tgl_validasi_cabang
+
+        // tgl_validasi_pusat
         if ($this->RowType == ROWTYPE_VIEW) {
             // id
             $this->id->ViewValue = $this->id->CurrentValue;
@@ -1388,14 +1380,6 @@ class PesantrenAdd extends Pesantren
             // kodepos
             $this->kodepos->ViewValue = $this->kodepos->CurrentValue;
             $this->kodepos->ViewCustomAttributes = "";
-
-            // latitude
-            $this->latitude->ViewValue = $this->latitude->CurrentValue;
-            $this->latitude->ViewCustomAttributes = "";
-
-            // longitude
-            $this->longitude->ViewValue = $this->longitude->CurrentValue;
-            $this->longitude->ViewCustomAttributes = "";
 
             // telpon
             $this->telpon->ViewValue = $this->telpon->CurrentValue;
@@ -1580,6 +1564,16 @@ class PesantrenAdd extends Pesantren
             $this->updated_at->ViewValue = FormatDateTime($this->updated_at->ViewValue, 0);
             $this->updated_at->ViewCustomAttributes = "";
 
+            // tgl_validasi_cabang
+            $this->tgl_validasi_cabang->ViewValue = $this->tgl_validasi_cabang->CurrentValue;
+            $this->tgl_validasi_cabang->ViewValue = FormatDateTime($this->tgl_validasi_cabang->ViewValue, 0);
+            $this->tgl_validasi_cabang->ViewCustomAttributes = "";
+
+            // tgl_validasi_pusat
+            $this->tgl_validasi_pusat->ViewValue = $this->tgl_validasi_pusat->CurrentValue;
+            $this->tgl_validasi_pusat->ViewValue = FormatDateTime($this->tgl_validasi_pusat->ViewValue, 0);
+            $this->tgl_validasi_pusat->ViewCustomAttributes = "";
+
             // kode
             $this->kode->LinkCustomAttributes = "";
             $this->kode->HrefValue = "";
@@ -1624,16 +1618,6 @@ class PesantrenAdd extends Pesantren
             $this->kodepos->LinkCustomAttributes = "";
             $this->kodepos->HrefValue = "";
             $this->kodepos->TooltipValue = "";
-
-            // latitude
-            $this->latitude->LinkCustomAttributes = "";
-            $this->latitude->HrefValue = "";
-            $this->latitude->TooltipValue = "";
-
-            // longitude
-            $this->longitude->LinkCustomAttributes = "";
-            $this->longitude->HrefValue = "";
-            $this->longitude->TooltipValue = "";
 
             // telpon
             $this->telpon->LinkCustomAttributes = "";
@@ -1897,22 +1881,6 @@ class PesantrenAdd extends Pesantren
             }
             $this->kodepos->EditValue = HtmlEncode($this->kodepos->CurrentValue);
 
-            // latitude
-            $this->latitude->EditAttrs["class"] = "form-control";
-            $this->latitude->EditCustomAttributes = "";
-            if (!$this->latitude->Raw) {
-                $this->latitude->CurrentValue = HtmlDecode($this->latitude->CurrentValue);
-            }
-            $this->latitude->EditValue = HtmlEncode($this->latitude->CurrentValue);
-
-            // longitude
-            $this->longitude->EditAttrs["class"] = "form-control";
-            $this->longitude->EditCustomAttributes = "";
-            if (!$this->longitude->Raw) {
-                $this->longitude->CurrentValue = HtmlDecode($this->longitude->CurrentValue);
-            }
-            $this->longitude->EditValue = HtmlEncode($this->longitude->CurrentValue);
-
             // telpon
             $this->telpon->EditAttrs["class"] = "form-control";
             $this->telpon->EditCustomAttributes = "";
@@ -2144,14 +2112,6 @@ class PesantrenAdd extends Pesantren
             $this->kodepos->LinkCustomAttributes = "";
             $this->kodepos->HrefValue = "";
 
-            // latitude
-            $this->latitude->LinkCustomAttributes = "";
-            $this->latitude->HrefValue = "";
-
-            // longitude
-            $this->longitude->LinkCustomAttributes = "";
-            $this->longitude->HrefValue = "";
-
             // telpon
             $this->telpon->LinkCustomAttributes = "";
             $this->telpon->HrefValue = "";
@@ -2308,16 +2268,6 @@ class PesantrenAdd extends Pesantren
                 $this->kodepos->addErrorMessage(str_replace("%s", $this->kodepos->caption(), $this->kodepos->RequiredErrorMessage));
             }
         }
-        if ($this->latitude->Required) {
-            if (!$this->latitude->IsDetailKey && EmptyValue($this->latitude->FormValue)) {
-                $this->latitude->addErrorMessage(str_replace("%s", $this->latitude->caption(), $this->latitude->RequiredErrorMessage));
-            }
-        }
-        if ($this->longitude->Required) {
-            if (!$this->longitude->IsDetailKey && EmptyValue($this->longitude->FormValue)) {
-                $this->longitude->addErrorMessage(str_replace("%s", $this->longitude->caption(), $this->longitude->RequiredErrorMessage));
-            }
-        }
         if ($this->telpon->Required) {
             if (!$this->telpon->IsDetailKey && EmptyValue($this->telpon->FormValue)) {
                 $this->telpon->addErrorMessage(str_replace("%s", $this->telpon->caption(), $this->telpon->RequiredErrorMessage));
@@ -2434,6 +2384,10 @@ class PesantrenAdd extends Pesantren
         if (in_array("fasilitaspesantren", $detailTblVar) && $detailPage->DetailAdd) {
             $detailPage->validateGridForm();
         }
+        $detailPage = Container("PendidikanpesantrenGrid");
+        if (in_array("pendidikanpesantren", $detailTblVar) && $detailPage->DetailAdd) {
+            $detailPage->validateGridForm();
+        }
 
         // Return validate result
         $validateForm = !$this->hasInvalidFields();
@@ -2512,12 +2466,6 @@ class PesantrenAdd extends Pesantren
 
         // kodepos
         $this->kodepos->setDbValueDef($rsnew, $this->kodepos->CurrentValue, null, false);
-
-        // latitude
-        $this->latitude->setDbValueDef($rsnew, $this->latitude->CurrentValue, null, false);
-
-        // longitude
-        $this->longitude->setDbValueDef($rsnew, $this->longitude->CurrentValue, null, false);
 
         // telpon
         $this->telpon->setDbValueDef($rsnew, $this->telpon->CurrentValue, null, false);
@@ -2969,6 +2917,16 @@ class PesantrenAdd extends Pesantren
                 $detailPage->pid->setSessionValue(""); // Clear master key if insert failed
                 }
             }
+            $detailPage = Container("PendidikanpesantrenGrid");
+            if (in_array("pendidikanpesantren", $detailTblVar) && $detailPage->DetailAdd) {
+                $detailPage->pid->setSessionValue($this->id->CurrentValue); // Set master key
+                $Security->loadCurrentUserLevel($this->ProjectID . "pendidikanpesantren"); // Load user level of detail table
+                $addRow = $detailPage->gridInsert();
+                $Security->loadCurrentUserLevel($this->ProjectID . $this->TableName); // Restore user level of master table
+                if (!$addRow) {
+                $detailPage->pid->setSessionValue(""); // Clear master key if insert failed
+                }
+            }
         }
 
         // Commit/Rollback transaction
@@ -3135,6 +3093,25 @@ class PesantrenAdd extends Pesantren
                     $detailPageObj->pid->IsDetailKey = true;
                     $detailPageObj->pid->CurrentValue = $this->id->CurrentValue;
                     $detailPageObj->pid->setSessionValue($detailPageObj->pid->CurrentValue);
+                }
+            }
+            if (in_array("pendidikanpesantren", $detailTblVar)) {
+                $detailPageObj = Container("PendidikanpesantrenGrid");
+                if ($detailPageObj->DetailAdd) {
+                    if ($this->CopyRecord) {
+                        $detailPageObj->CurrentMode = "copy";
+                    } else {
+                        $detailPageObj->CurrentMode = "add";
+                    }
+                    $detailPageObj->CurrentAction = "gridadd";
+
+                    // Save current master table to detail table
+                    $detailPageObj->setCurrentMasterTable($this->TableVar);
+                    $detailPageObj->setStartRecordNumber(1);
+                    $detailPageObj->pid->IsDetailKey = true;
+                    $detailPageObj->pid->CurrentValue = $this->id->CurrentValue;
+                    $detailPageObj->pid->setSessionValue($detailPageObj->pid->CurrentValue);
+                    $detailPageObj->idjenispp->setSessionValue(""); // Clear session key
                 }
             }
         }

@@ -116,11 +116,26 @@ $Page->showMessage();
 <input type="hidden" name="action" id="action" value="update">
 <input type="hidden" name="modal" value="<?= (int)$Page->IsModal ?>">
 <input type="hidden" name="<?= $Page->OldKeyName ?>" value="<?= $Page->OldKey ?>">
+<?php if ($Page->getCurrentMasterTable() == "pesantren") { ?>
+<input type="hidden" name="<?= Config("TABLE_SHOW_MASTER") ?>" value="pesantren">
+<input type="hidden" name="fk_id" value="<?= HtmlEncode($Page->pid->getSessionValue()) ?>">
+<?php } ?>
+<?php if ($Page->getCurrentMasterTable() == "jenispendidikanpesantren") { ?>
+<input type="hidden" name="<?= Config("TABLE_SHOW_MASTER") ?>" value="jenispendidikanpesantren">
+<input type="hidden" name="fk_id" value="<?= HtmlEncode($Page->idjenispp->getSessionValue()) ?>">
+<?php } ?>
 <div class="ew-edit-div"><!-- page* -->
 <?php if ($Page->idjenispp->Visible) { // idjenispp ?>
     <div id="r_idjenispp" class="form-group row">
         <label id="elh_pendidikanpesantren_idjenispp" for="x_idjenispp" class="<?= $Page->LeftColumnClass ?>"><?= $Page->idjenispp->caption() ?><?= $Page->idjenispp->Required ? $Language->phrase("FieldRequiredIndicator") : "" ?></label>
         <div class="<?= $Page->RightColumnClass ?>"><div <?= $Page->idjenispp->cellAttributes() ?>>
+<?php if ($Page->idjenispp->getSessionValue() != "") { ?>
+<span id="el_pendidikanpesantren_idjenispp">
+<span<?= $Page->idjenispp->viewAttributes() ?>>
+<input type="text" readonly class="form-control-plaintext" value="<?= HtmlEncode(RemoveHtml($Page->idjenispp->getDisplayValue($Page->idjenispp->ViewValue))) ?>"></span>
+</span>
+<input type="hidden" id="x_idjenispp" name="x_idjenispp" value="<?= HtmlEncode($Page->idjenispp->CurrentValue) ?>" data-hidden="1">
+<?php } else { ?>
 <span id="el_pendidikanpesantren_idjenispp">
     <select
         id="x_idjenispp"
@@ -146,6 +161,7 @@ loadjs.ready("head", function() {
 });
 </script>
 </span>
+<?php } ?>
 </div></div>
     </div>
 <?php } ?>

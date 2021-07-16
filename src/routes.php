@@ -315,6 +315,7 @@ return function (App $app) {
     $app->any('/PendidikanpesantrenView[/{id}]', PendidikanpesantrenController::class . ':view')->add(PermissionMiddleware::class)->setName('PendidikanpesantrenView-pendidikanpesantren-view'); // view
     $app->any('/PendidikanpesantrenEdit[/{id}]', PendidikanpesantrenController::class . ':edit')->add(PermissionMiddleware::class)->setName('PendidikanpesantrenEdit-pendidikanpesantren-edit'); // edit
     $app->any('/PendidikanpesantrenDelete[/{id}]', PendidikanpesantrenController::class . ':delete')->add(PermissionMiddleware::class)->setName('PendidikanpesantrenDelete-pendidikanpesantren-delete'); // delete
+    $app->any('/PendidikanpesantrenPreview', PendidikanpesantrenController::class . ':preview')->add(PermissionMiddleware::class)->setName('PendidikanpesantrenPreview-pendidikanpesantren-preview'); // preview
     $app->group(
         '/pendidikanpesantren',
         function (RouteCollectorProxy $group) {
@@ -323,6 +324,7 @@ return function (App $app) {
             $group->any('/' . Config("VIEW_ACTION") . '[/{id}]', PendidikanpesantrenController::class . ':view')->add(PermissionMiddleware::class)->setName('pendidikanpesantren/view-pendidikanpesantren-view-2'); // view
             $group->any('/' . Config("EDIT_ACTION") . '[/{id}]', PendidikanpesantrenController::class . ':edit')->add(PermissionMiddleware::class)->setName('pendidikanpesantren/edit-pendidikanpesantren-edit-2'); // edit
             $group->any('/' . Config("DELETE_ACTION") . '[/{id}]', PendidikanpesantrenController::class . ':delete')->add(PermissionMiddleware::class)->setName('pendidikanpesantren/delete-pendidikanpesantren-delete-2'); // delete
+            $group->any('/' . Config("PREVIEW_ACTION") . '', PendidikanpesantrenController::class . ':preview')->add(PermissionMiddleware::class)->setName('pendidikanpesantren/preview-pendidikanpesantren-preview-2'); // preview
         }
     );
 

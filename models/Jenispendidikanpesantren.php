@@ -70,6 +70,7 @@ class Jenispendidikanpesantren extends DbTable
         $this->id = new DbField('jenispendidikanpesantren', 'jenispendidikanpesantren', 'x_id', 'id', '`id`', '`id`', 3, 11, -1, false, '`id`', false, false, false, 'FORMATTED TEXT', 'NO');
         $this->id->IsAutoIncrement = true; // Autoincrement field
         $this->id->IsPrimaryKey = true; // Primary key field
+        $this->id->IsForeignKey = true; // Foreign key field
         $this->id->Sortable = true; // Allow sort
         $this->id->DefaultErrorMessage = $Language->phrase("IncorrectInteger");
         $this->id->CustomMsg = $Language->FieldPhrase($this->TableVar, $this->id->Param, "CustomMsg");
@@ -119,6 +120,32 @@ class Jenispendidikanpesantren extends DbTable
         } else {
             $fld->setSort("");
         }
+    }
+
+    // Current detail table name
+    public function getCurrentDetailTable()
+    {
+        return Session(PROJECT_NAME . "_" . $this->TableVar . "_" . Config("TABLE_DETAIL_TABLE"));
+    }
+
+    public function setCurrentDetailTable($v)
+    {
+        $_SESSION[PROJECT_NAME . "_" . $this->TableVar . "_" . Config("TABLE_DETAIL_TABLE")] = $v;
+    }
+
+    // Get detail url
+    public function getDetailUrl()
+    {
+        // Detail url
+        $detailUrl = "";
+        if ($this->getCurrentDetailTable() == "pendidikanpesantren") {
+            $detailUrl = Container("pendidikanpesantren")->getListUrl() . "?" . Config("TABLE_SHOW_MASTER") . "=" . $this->TableVar;
+            $detailUrl .= "&" . GetForeignKeyUrl("fk_id", $this->id->CurrentValue);
+        }
+        if ($detailUrl == "") {
+            $detailUrl = "JenispendidikanpesantrenList";
+        }
+        return $detailUrl;
     }
 
     // Table level SQL
@@ -642,7 +669,11 @@ class Jenispendidikanpesantren extends DbTable
     // Edit URL
     public function getEditUrl($parm = "")
     {
-        $url = $this->keyUrl("JenispendidikanpesantrenEdit", $this->getUrlParm($parm));
+        if ($parm != "") {
+            $url = $this->keyUrl("JenispendidikanpesantrenEdit", $this->getUrlParm($parm));
+        } else {
+            $url = $this->keyUrl("JenispendidikanpesantrenEdit", $this->getUrlParm(Config("TABLE_SHOW_DETAIL") . "="));
+        }
         return $this->addMasterUrl($url);
     }
 
@@ -656,7 +687,11 @@ class Jenispendidikanpesantren extends DbTable
     // Copy URL
     public function getCopyUrl($parm = "")
     {
-        $url = $this->keyUrl("JenispendidikanpesantrenAdd", $this->getUrlParm($parm));
+        if ($parm != "") {
+            $url = $this->keyUrl("JenispendidikanpesantrenAdd", $this->getUrlParm($parm));
+        } else {
+            $url = $this->keyUrl("JenispendidikanpesantrenAdd", $this->getUrlParm(Config("TABLE_SHOW_DETAIL") . "="));
+        }
         return $this->addMasterUrl($url);
     }
 

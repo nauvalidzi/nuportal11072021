@@ -65,9 +65,9 @@ class Pendidikanpesantren extends DbTable
         $this->ExportExcelPageSize = \PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::PAPERSIZE_A4; // Page size (PhpSpreadsheet only)
         $this->ExportWordPageOrientation = "portrait"; // Page orientation (PHPWord only)
         $this->ExportWordColumnWidth = null; // Cell width (PHPWord only)
-        $this->DetailAdd = false; // Allow detail add
-        $this->DetailEdit = false; // Allow detail edit
-        $this->DetailView = false; // Allow detail view
+        $this->DetailAdd = true; // Allow detail add
+        $this->DetailEdit = true; // Allow detail edit
+        $this->DetailView = true; // Allow detail view
         $this->ShowMultipleDetails = false; // Show multiple details
         $this->GridAddRowCount = 5;
         $this->AllowAddDeleteRow = true; // Allow add/delete row
@@ -85,6 +85,7 @@ class Pendidikanpesantren extends DbTable
 
         // pid
         $this->pid = new DbField('pendidikanpesantren', 'pendidikanpesantren', 'x_pid', 'pid', '`pid`', '`pid`', 3, 11, -1, false, '`pid`', false, false, false, 'FORMATTED TEXT', 'SELECT');
+        $this->pid->IsForeignKey = true; // Foreign key field
         $this->pid->Sortable = true; // Allow sort
         $this->pid->UsePleaseSelect = true; // Use PleaseSelect by default
         $this->pid->PleaseSelectText = $Language->phrase("PleaseSelect"); // "PleaseSelect" text
@@ -102,6 +103,7 @@ class Pendidikanpesantren extends DbTable
 
         // idjenispp
         $this->idjenispp = new DbField('pendidikanpesantren', 'pendidikanpesantren', 'x_idjenispp', 'idjenispp', '`idjenispp`', '`idjenispp`', 3, 11, -1, false, '`idjenispp`', false, false, false, 'FORMATTED TEXT', 'SELECT');
+        $this->idjenispp->IsForeignKey = true; // Foreign key field
         $this->idjenispp->Sortable = true; // Allow sort
         $this->idjenispp->UsePleaseSelect = true; // Use PleaseSelect by default
         $this->idjenispp->PleaseSelectText = $Language->phrase("PleaseSelect"); // "PleaseSelect" text
@@ -197,6 +199,83 @@ class Pendidikanpesantren extends DbTable
         } else {
             $fld->setSort("");
         }
+    }
+
+    // Current master table name
+    public function getCurrentMasterTable()
+    {
+        return Session(PROJECT_NAME . "_" . $this->TableVar . "_" . Config("TABLE_MASTER_TABLE"));
+    }
+
+    public function setCurrentMasterTable($v)
+    {
+        $_SESSION[PROJECT_NAME . "_" . $this->TableVar . "_" . Config("TABLE_MASTER_TABLE")] = $v;
+    }
+
+    // Session master WHERE clause
+    public function getMasterFilter()
+    {
+        // Master filter
+        $masterFilter = "";
+        if ($this->getCurrentMasterTable() == "pesantren") {
+            if ($this->pid->getSessionValue() != "") {
+                $masterFilter .= "" . GetForeignKeySql("`id`", $this->pid->getSessionValue(), DATATYPE_NUMBER, "DB");
+            } else {
+                return "";
+            }
+        }
+        if ($this->getCurrentMasterTable() == "jenispendidikanpesantren") {
+            if ($this->idjenispp->getSessionValue() != "") {
+                $masterFilter .= "" . GetForeignKeySql("`id`", $this->idjenispp->getSessionValue(), DATATYPE_NUMBER, "DB");
+            } else {
+                return "";
+            }
+        }
+        return $masterFilter;
+    }
+
+    // Session detail WHERE clause
+    public function getDetailFilter()
+    {
+        // Detail filter
+        $detailFilter = "";
+        if ($this->getCurrentMasterTable() == "pesantren") {
+            if ($this->pid->getSessionValue() != "") {
+                $detailFilter .= "" . GetForeignKeySql("`pid`", $this->pid->getSessionValue(), DATATYPE_NUMBER, "DB");
+            } else {
+                return "";
+            }
+        }
+        if ($this->getCurrentMasterTable() == "jenispendidikanpesantren") {
+            if ($this->idjenispp->getSessionValue() != "") {
+                $detailFilter .= "" . GetForeignKeySql("`idjenispp`", $this->idjenispp->getSessionValue(), DATATYPE_NUMBER, "DB");
+            } else {
+                return "";
+            }
+        }
+        return $detailFilter;
+    }
+
+    // Master filter
+    public function sqlMasterFilter_pesantren()
+    {
+        return "`id`=@id@";
+    }
+    // Detail filter
+    public function sqlDetailFilter_pesantren()
+    {
+        return "`pid`=@pid@";
+    }
+
+    // Master filter
+    public function sqlMasterFilter_jenispendidikanpesantren()
+    {
+        return "`id`=@id@";
+    }
+    // Detail filter
+    public function sqlDetailFilter_jenispendidikanpesantren()
+    {
+        return "`idjenispp`=@idjenispp@";
     }
 
     // Table level SQL
@@ -296,6 +375,16 @@ class Pendidikanpesantren extends DbTable
     // Apply User ID filters
     public function applyUserIDFilters($filter)
     {
+        global $Security;
+        // Add User ID filter
+        if ($Security->currentUserID() != "" && !$Security->isAdmin()) { // Non system admin
+            if ($this->getCurrentMasterTable() == "pesantren" || $this->getCurrentMasterTable() == "") {
+                $filter = $this->addDetailUserIDFilter($filter, "pesantren"); // Add detail User ID filter
+            }
+            if ($this->getCurrentMasterTable() == "jenispendidikanpesantren" || $this->getCurrentMasterTable() == "") {
+                $filter = $this->addDetailUserIDFilter($filter, "jenispendidikanpesantren"); // Add detail User ID filter
+            }
+        }
         return $filter;
     }
 
@@ -762,6 +851,14 @@ class Pendidikanpesantren extends DbTable
     // Add master url
     public function addMasterUrl($url)
     {
+        if ($this->getCurrentMasterTable() == "pesantren" && !ContainsString($url, Config("TABLE_SHOW_MASTER") . "=")) {
+            $url .= (ContainsString($url, "?") ? "&" : "?") . Config("TABLE_SHOW_MASTER") . "=" . $this->getCurrentMasterTable();
+            $url .= "&" . GetForeignKeyUrl("fk_id", $this->pid->CurrentValue ?? $this->pid->getSessionValue());
+        }
+        if ($this->getCurrentMasterTable() == "jenispendidikanpesantren" && !ContainsString($url, Config("TABLE_SHOW_MASTER") . "=")) {
+            $url .= (ContainsString($url, "?") ? "&" : "?") . Config("TABLE_SHOW_MASTER") . "=" . $this->getCurrentMasterTable();
+            $url .= "&" . GetForeignKeyUrl("fk_id", $this->idjenispp->CurrentValue ?? $this->idjenispp->getSessionValue());
+        }
         return $url;
     }
 
@@ -1096,10 +1193,56 @@ SORTHTML;
         // pid
         $this->pid->EditAttrs["class"] = "form-control";
         $this->pid->EditCustomAttributes = "";
+        if ($this->pid->getSessionValue() != "") {
+            $this->pid->CurrentValue = GetForeignKeyValue($this->pid->getSessionValue());
+            $curVal = trim(strval($this->pid->CurrentValue));
+            if ($curVal != "") {
+                $this->pid->ViewValue = $this->pid->lookupCacheOption($curVal);
+                if ($this->pid->ViewValue === null) { // Lookup from database
+                    $filterWrk = "`id`" . SearchString("=", $curVal, DATATYPE_NUMBER, "");
+                    $sqlWrk = $this->pid->Lookup->getSql(false, $filterWrk, '', $this, true, true);
+                    $rswrk = Conn()->executeQuery($sqlWrk)->fetchAll(\PDO::FETCH_BOTH);
+                    $ari = count($rswrk);
+                    if ($ari > 0) { // Lookup values found
+                        $arwrk = $this->pid->Lookup->renderViewRow($rswrk[0]);
+                        $this->pid->ViewValue = $this->pid->displayValue($arwrk);
+                    } else {
+                        $this->pid->ViewValue = $this->pid->CurrentValue;
+                    }
+                }
+            } else {
+                $this->pid->ViewValue = null;
+            }
+            $this->pid->ViewCustomAttributes = "";
+        } else {
+        }
 
         // idjenispp
         $this->idjenispp->EditAttrs["class"] = "form-control";
         $this->idjenispp->EditCustomAttributes = "";
+        if ($this->idjenispp->getSessionValue() != "") {
+            $this->idjenispp->CurrentValue = GetForeignKeyValue($this->idjenispp->getSessionValue());
+            $curVal = trim(strval($this->idjenispp->CurrentValue));
+            if ($curVal != "") {
+                $this->idjenispp->ViewValue = $this->idjenispp->lookupCacheOption($curVal);
+                if ($this->idjenispp->ViewValue === null) { // Lookup from database
+                    $filterWrk = "`id`" . SearchString("=", $curVal, DATATYPE_NUMBER, "");
+                    $sqlWrk = $this->idjenispp->Lookup->getSql(false, $filterWrk, '', $this, true, true);
+                    $rswrk = Conn()->executeQuery($sqlWrk)->fetchAll(\PDO::FETCH_BOTH);
+                    $ari = count($rswrk);
+                    if ($ari > 0) { // Lookup values found
+                        $arwrk = $this->idjenispp->Lookup->renderViewRow($rswrk[0]);
+                        $this->idjenispp->ViewValue = $this->idjenispp->displayValue($arwrk);
+                    } else {
+                        $this->idjenispp->ViewValue = $this->idjenispp->CurrentValue;
+                    }
+                }
+            } else {
+                $this->idjenispp->ViewValue = null;
+            }
+            $this->idjenispp->ViewCustomAttributes = "";
+        } else {
+        }
 
         // nama
         $this->nama->EditAttrs["class"] = "form-control";
@@ -1262,6 +1405,30 @@ SORTHTML;
         if (!$doc->ExportCustom) {
             $doc->exportTableFooter();
         }
+    }
+
+    // Add master User ID filter
+    public function addMasterUserIDFilter($filter, $currentMasterTable)
+    {
+        $filterWrk = $filter;
+        if ($currentMasterTable == "pesantren") {
+            $filterWrk = Container("pesantren")->addUserIDFilter($filterWrk);
+        }
+        return $filterWrk;
+    }
+
+    // Add detail User ID filter
+    public function addDetailUserIDFilter($filter, $currentMasterTable)
+    {
+        $filterWrk = $filter;
+        if ($currentMasterTable == "pesantren") {
+            $mastertable = Container("pesantren");
+            if (!$mastertable->userIdAllow()) {
+                $subqueryWrk = $mastertable->getUserIDSubquery($this->pid, $mastertable->id);
+                AddFilter($filterWrk, $subqueryWrk);
+            }
+        }
+        return $filterWrk;
     }
 
     // Get file data

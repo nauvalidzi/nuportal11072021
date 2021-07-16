@@ -524,6 +524,10 @@ class PendidikanpesantrenAdd extends Pendidikanpesantren
         // Load old record / default values
         $loaded = $this->loadOldRecord();
 
+        // Set up master/detail parameters
+        // NOTE: must be after loadOldRecord to prevent master key values overwritten
+        $this->setupMasterParms();
+
         // Load form values
         if ($postBack) {
             $this->loadFormValues(); // Load form values
@@ -1013,49 +1017,95 @@ class PendidikanpesantrenAdd extends Pendidikanpesantren
             // pid
             $this->pid->EditAttrs["class"] = "form-control";
             $this->pid->EditCustomAttributes = "";
-            $curVal = trim(strval($this->pid->CurrentValue));
-            if ($curVal != "") {
-                $this->pid->ViewValue = $this->pid->lookupCacheOption($curVal);
-            } else {
-                $this->pid->ViewValue = $this->pid->Lookup !== null && is_array($this->pid->Lookup->Options) ? $curVal : null;
-            }
-            if ($this->pid->ViewValue !== null) { // Load from cache
-                $this->pid->EditValue = array_values($this->pid->Lookup->Options);
-            } else { // Lookup from database
-                if ($curVal == "") {
-                    $filterWrk = "0=1";
+            if ($this->pid->getSessionValue() != "") {
+                $this->pid->CurrentValue = GetForeignKeyValue($this->pid->getSessionValue());
+                $curVal = trim(strval($this->pid->CurrentValue));
+                if ($curVal != "") {
+                    $this->pid->ViewValue = $this->pid->lookupCacheOption($curVal);
+                    if ($this->pid->ViewValue === null) { // Lookup from database
+                        $filterWrk = "`id`" . SearchString("=", $curVal, DATATYPE_NUMBER, "");
+                        $sqlWrk = $this->pid->Lookup->getSql(false, $filterWrk, '', $this, true, true);
+                        $rswrk = Conn()->executeQuery($sqlWrk)->fetchAll(\PDO::FETCH_BOTH);
+                        $ari = count($rswrk);
+                        if ($ari > 0) { // Lookup values found
+                            $arwrk = $this->pid->Lookup->renderViewRow($rswrk[0]);
+                            $this->pid->ViewValue = $this->pid->displayValue($arwrk);
+                        } else {
+                            $this->pid->ViewValue = $this->pid->CurrentValue;
+                        }
+                    }
                 } else {
-                    $filterWrk = "`id`" . SearchString("=", $this->pid->CurrentValue, DATATYPE_NUMBER, "");
+                    $this->pid->ViewValue = null;
                 }
-                $sqlWrk = $this->pid->Lookup->getSql(true, $filterWrk, '', $this, false, true);
-                $rswrk = Conn()->executeQuery($sqlWrk)->fetchAll(\PDO::FETCH_BOTH);
-                $ari = count($rswrk);
-                $arwrk = $rswrk;
-                $this->pid->EditValue = $arwrk;
+                $this->pid->ViewCustomAttributes = "";
+            } else {
+                $curVal = trim(strval($this->pid->CurrentValue));
+                if ($curVal != "") {
+                    $this->pid->ViewValue = $this->pid->lookupCacheOption($curVal);
+                } else {
+                    $this->pid->ViewValue = $this->pid->Lookup !== null && is_array($this->pid->Lookup->Options) ? $curVal : null;
+                }
+                if ($this->pid->ViewValue !== null) { // Load from cache
+                    $this->pid->EditValue = array_values($this->pid->Lookup->Options);
+                } else { // Lookup from database
+                    if ($curVal == "") {
+                        $filterWrk = "0=1";
+                    } else {
+                        $filterWrk = "`id`" . SearchString("=", $this->pid->CurrentValue, DATATYPE_NUMBER, "");
+                    }
+                    $sqlWrk = $this->pid->Lookup->getSql(true, $filterWrk, '', $this, false, true);
+                    $rswrk = Conn()->executeQuery($sqlWrk)->fetchAll(\PDO::FETCH_BOTH);
+                    $ari = count($rswrk);
+                    $arwrk = $rswrk;
+                    $this->pid->EditValue = $arwrk;
+                }
             }
 
             // idjenispp
             $this->idjenispp->EditAttrs["class"] = "form-control";
             $this->idjenispp->EditCustomAttributes = "";
-            $curVal = trim(strval($this->idjenispp->CurrentValue));
-            if ($curVal != "") {
-                $this->idjenispp->ViewValue = $this->idjenispp->lookupCacheOption($curVal);
-            } else {
-                $this->idjenispp->ViewValue = $this->idjenispp->Lookup !== null && is_array($this->idjenispp->Lookup->Options) ? $curVal : null;
-            }
-            if ($this->idjenispp->ViewValue !== null) { // Load from cache
-                $this->idjenispp->EditValue = array_values($this->idjenispp->Lookup->Options);
-            } else { // Lookup from database
-                if ($curVal == "") {
-                    $filterWrk = "0=1";
+            if ($this->idjenispp->getSessionValue() != "") {
+                $this->idjenispp->CurrentValue = GetForeignKeyValue($this->idjenispp->getSessionValue());
+                $curVal = trim(strval($this->idjenispp->CurrentValue));
+                if ($curVal != "") {
+                    $this->idjenispp->ViewValue = $this->idjenispp->lookupCacheOption($curVal);
+                    if ($this->idjenispp->ViewValue === null) { // Lookup from database
+                        $filterWrk = "`id`" . SearchString("=", $curVal, DATATYPE_NUMBER, "");
+                        $sqlWrk = $this->idjenispp->Lookup->getSql(false, $filterWrk, '', $this, true, true);
+                        $rswrk = Conn()->executeQuery($sqlWrk)->fetchAll(\PDO::FETCH_BOTH);
+                        $ari = count($rswrk);
+                        if ($ari > 0) { // Lookup values found
+                            $arwrk = $this->idjenispp->Lookup->renderViewRow($rswrk[0]);
+                            $this->idjenispp->ViewValue = $this->idjenispp->displayValue($arwrk);
+                        } else {
+                            $this->idjenispp->ViewValue = $this->idjenispp->CurrentValue;
+                        }
+                    }
                 } else {
-                    $filterWrk = "`id`" . SearchString("=", $this->idjenispp->CurrentValue, DATATYPE_NUMBER, "");
+                    $this->idjenispp->ViewValue = null;
                 }
-                $sqlWrk = $this->idjenispp->Lookup->getSql(true, $filterWrk, '', $this, false, true);
-                $rswrk = Conn()->executeQuery($sqlWrk)->fetchAll(\PDO::FETCH_BOTH);
-                $ari = count($rswrk);
-                $arwrk = $rswrk;
-                $this->idjenispp->EditValue = $arwrk;
+                $this->idjenispp->ViewCustomAttributes = "";
+            } else {
+                $curVal = trim(strval($this->idjenispp->CurrentValue));
+                if ($curVal != "") {
+                    $this->idjenispp->ViewValue = $this->idjenispp->lookupCacheOption($curVal);
+                } else {
+                    $this->idjenispp->ViewValue = $this->idjenispp->Lookup !== null && is_array($this->idjenispp->Lookup->Options) ? $curVal : null;
+                }
+                if ($this->idjenispp->ViewValue !== null) { // Load from cache
+                    $this->idjenispp->EditValue = array_values($this->idjenispp->Lookup->Options);
+                } else { // Lookup from database
+                    if ($curVal == "") {
+                        $filterWrk = "0=1";
+                    } else {
+                        $filterWrk = "`id`" . SearchString("=", $this->idjenispp->CurrentValue, DATATYPE_NUMBER, "");
+                    }
+                    $sqlWrk = $this->idjenispp->Lookup->getSql(true, $filterWrk, '', $this, false, true);
+                    $rswrk = Conn()->executeQuery($sqlWrk)->fetchAll(\PDO::FETCH_BOTH);
+                    $ari = count($rswrk);
+                    $arwrk = $rswrk;
+                    $this->idjenispp->EditValue = $arwrk;
+                }
             }
 
             // nama
@@ -1233,6 +1283,32 @@ class PendidikanpesantrenAdd extends Pendidikanpesantren
     protected function addRow($rsold = null)
     {
         global $Language, $Security;
+
+        // Check if valid key values for master user
+        if ($Security->currentUserID() != "" && !$Security->isAdmin()) { // Non system admin
+            $masterFilter = $this->sqlMasterFilter_pesantren();
+            if (strval($this->pid->CurrentValue) != "") {
+                $masterFilter = str_replace("@id@", AdjustSql($this->pid->CurrentValue, "DB"), $masterFilter);
+            } else {
+                $masterFilter = "";
+            }
+            if ($masterFilter != "") {
+                $rsmaster = Container("pesantren")->loadRs($masterFilter)->fetch(\PDO::FETCH_ASSOC);
+                $masterRecordExists = $rsmaster !== false;
+                $validMasterKey = true;
+                if ($masterRecordExists) {
+                    $validMasterKey = $Security->isValidUserID($rsmaster['userid']);
+                } elseif ($this->getCurrentMasterTable() == "pesantren") {
+                    $validMasterKey = false;
+                }
+                if (!$validMasterKey) {
+                    $masterUserIdMsg = str_replace("%c", CurrentUserID(), $Language->phrase("UnAuthorizedMasterUserID"));
+                    $masterUserIdMsg = str_replace("%f", $masterFilter, $masterUserIdMsg);
+                    $this->setFailureMessage($masterUserIdMsg);
+                    return false;
+                }
+            }
+        }
         $conn = $this->getConnection();
 
         // Load db values from rsold
@@ -1305,6 +1381,108 @@ class PendidikanpesantrenAdd extends Pendidikanpesantren
             WriteJson(["success" => true, $this->TableVar => $row]);
         }
         return $addRow;
+    }
+
+    // Set up master/detail based on QueryString
+    protected function setupMasterParms()
+    {
+        $validMaster = false;
+        // Get the keys for master table
+        if (($master = Get(Config("TABLE_SHOW_MASTER"), Get(Config("TABLE_MASTER")))) !== null) {
+            $masterTblVar = $master;
+            if ($masterTblVar == "") {
+                $validMaster = true;
+                $this->DbMasterFilter = "";
+                $this->DbDetailFilter = "";
+            }
+            if ($masterTblVar == "pesantren") {
+                $validMaster = true;
+                $masterTbl = Container("pesantren");
+                if (($parm = Get("fk_id", Get("pid"))) !== null) {
+                    $masterTbl->id->setQueryStringValue($parm);
+                    $this->pid->setQueryStringValue($masterTbl->id->QueryStringValue);
+                    $this->pid->setSessionValue($this->pid->QueryStringValue);
+                    if (!is_numeric($masterTbl->id->QueryStringValue)) {
+                        $validMaster = false;
+                    }
+                } else {
+                    $validMaster = false;
+                }
+            }
+            if ($masterTblVar == "jenispendidikanpesantren") {
+                $validMaster = true;
+                $masterTbl = Container("jenispendidikanpesantren");
+                if (($parm = Get("fk_id", Get("idjenispp"))) !== null) {
+                    $masterTbl->id->setQueryStringValue($parm);
+                    $this->idjenispp->setQueryStringValue($masterTbl->id->QueryStringValue);
+                    $this->idjenispp->setSessionValue($this->idjenispp->QueryStringValue);
+                    if (!is_numeric($masterTbl->id->QueryStringValue)) {
+                        $validMaster = false;
+                    }
+                } else {
+                    $validMaster = false;
+                }
+            }
+        } elseif (($master = Post(Config("TABLE_SHOW_MASTER"), Post(Config("TABLE_MASTER")))) !== null) {
+            $masterTblVar = $master;
+            if ($masterTblVar == "") {
+                    $validMaster = true;
+                    $this->DbMasterFilter = "";
+                    $this->DbDetailFilter = "";
+            }
+            if ($masterTblVar == "pesantren") {
+                $validMaster = true;
+                $masterTbl = Container("pesantren");
+                if (($parm = Post("fk_id", Post("pid"))) !== null) {
+                    $masterTbl->id->setFormValue($parm);
+                    $this->pid->setFormValue($masterTbl->id->FormValue);
+                    $this->pid->setSessionValue($this->pid->FormValue);
+                    if (!is_numeric($masterTbl->id->FormValue)) {
+                        $validMaster = false;
+                    }
+                } else {
+                    $validMaster = false;
+                }
+            }
+            if ($masterTblVar == "jenispendidikanpesantren") {
+                $validMaster = true;
+                $masterTbl = Container("jenispendidikanpesantren");
+                if (($parm = Post("fk_id", Post("idjenispp"))) !== null) {
+                    $masterTbl->id->setFormValue($parm);
+                    $this->idjenispp->setFormValue($masterTbl->id->FormValue);
+                    $this->idjenispp->setSessionValue($this->idjenispp->FormValue);
+                    if (!is_numeric($masterTbl->id->FormValue)) {
+                        $validMaster = false;
+                    }
+                } else {
+                    $validMaster = false;
+                }
+            }
+        }
+        if ($validMaster) {
+            // Save current master table
+            $this->setCurrentMasterTable($masterTblVar);
+
+            // Reset start record counter (new master key)
+            if (!$this->isAddOrEdit()) {
+                $this->StartRecord = 1;
+                $this->setStartRecordNumber($this->StartRecord);
+            }
+
+            // Clear previous master key from Session
+            if ($masterTblVar != "pesantren") {
+                if ($this->pid->CurrentValue == "") {
+                    $this->pid->setSessionValue("");
+                }
+            }
+            if ($masterTblVar != "jenispendidikanpesantren") {
+                if ($this->idjenispp->CurrentValue == "") {
+                    $this->idjenispp->setSessionValue("");
+                }
+            }
+        }
+        $this->DbMasterFilter = $this->getMasterFilter(); // Get master filter
+        $this->DbDetailFilter = $this->getDetailFilter(); // Get detail filter
     }
 
     // Set up Breadcrumb

@@ -144,28 +144,6 @@ $Page->showMessage();
 </td>
     </tr>
 <?php } ?>
-<?php if ($Page->latitude->Visible) { // latitude ?>
-    <tr id="r_latitude">
-        <td class="<?= $Page->TableLeftColumnClass ?>"><span id="elh_pesantren_latitude"><?= $Page->latitude->caption() ?></span></td>
-        <td data-name="latitude" <?= $Page->latitude->cellAttributes() ?>>
-<span id="el_pesantren_latitude">
-<span<?= $Page->latitude->viewAttributes() ?>>
-<?= $Page->latitude->getViewValue() ?></span>
-</span>
-</td>
-    </tr>
-<?php } ?>
-<?php if ($Page->longitude->Visible) { // longitude ?>
-    <tr id="r_longitude">
-        <td class="<?= $Page->TableLeftColumnClass ?>"><span id="elh_pesantren_longitude"><?= $Page->longitude->caption() ?></span></td>
-        <td data-name="longitude" <?= $Page->longitude->cellAttributes() ?>>
-<span id="el_pesantren_longitude">
-<span<?= $Page->longitude->viewAttributes() ?>>
-<?= $Page->longitude->getViewValue() ?></span>
-</span>
-</td>
-    </tr>
-<?php } ?>
 <?php if ($Page->telpon->Visible) { // telpon ?>
     <tr id="r_telpon">
         <td class="<?= $Page->TableLeftColumnClass ?>"><span id="elh_pesantren_telpon"><?= $Page->telpon->caption() ?></span></td>
@@ -390,6 +368,28 @@ $Page->showMessage();
 </td>
     </tr>
 <?php } ?>
+<?php if ($Page->tgl_validasi_cabang->Visible) { // tgl_validasi_cabang ?>
+    <tr id="r_tgl_validasi_cabang">
+        <td class="<?= $Page->TableLeftColumnClass ?>"><span id="elh_pesantren_tgl_validasi_cabang"><?= $Page->tgl_validasi_cabang->caption() ?></span></td>
+        <td data-name="tgl_validasi_cabang" <?= $Page->tgl_validasi_cabang->cellAttributes() ?>>
+<span id="el_pesantren_tgl_validasi_cabang">
+<span<?= $Page->tgl_validasi_cabang->viewAttributes() ?>>
+<?= $Page->tgl_validasi_cabang->getViewValue() ?></span>
+</span>
+</td>
+    </tr>
+<?php } ?>
+<?php if ($Page->tgl_validasi_pusat->Visible) { // tgl_validasi_pusat ?>
+    <tr id="r_tgl_validasi_pusat">
+        <td class="<?= $Page->TableLeftColumnClass ?>"><span id="elh_pesantren_tgl_validasi_pusat"><?= $Page->tgl_validasi_pusat->caption() ?></span></td>
+        <td data-name="tgl_validasi_pusat" <?= $Page->tgl_validasi_pusat->cellAttributes() ?>>
+<span id="el_pesantren_tgl_validasi_pusat">
+<span<?= $Page->tgl_validasi_pusat->viewAttributes() ?>>
+<?= $Page->tgl_validasi_pusat->getViewValue() ?></span>
+</span>
+</td>
+    </tr>
+<?php } ?>
 </table>
 <?php
     if (in_array("fasilitasusaha", explode(",", $Page->getCurrentDetailTable())) && $fasilitasusaha->DetailView) {
@@ -438,6 +438,14 @@ $Page->showMessage();
 <h4 class="ew-detail-caption"><?= $Language->tablePhrase("fasilitaspesantren", "TblCaption") ?></h4>
 <?php } ?>
 <?php include_once "FasilitaspesantrenGrid.php" ?>
+<?php } ?>
+<?php
+    if (in_array("pendidikanpesantren", explode(",", $Page->getCurrentDetailTable())) && $pendidikanpesantren->DetailView) {
+?>
+<?php if ($Page->getCurrentDetailTable() != "") { ?>
+<h4 class="ew-detail-caption"><?= $Language->tablePhrase("pendidikanpesantren", "TblCaption") ?></h4>
+<?php } ?>
+<?php include_once "PendidikanpesantrenGrid.php" ?>
 <?php } ?>
 </form>
 <?php

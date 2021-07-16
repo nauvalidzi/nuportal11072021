@@ -122,6 +122,14 @@ $Page->showMessage();
     </div>
 <?php } ?>
 </div><!-- /page* -->
+<?php
+    if (in_array("pendidikanpesantren", explode(",", $Page->getCurrentDetailTable())) && $pendidikanpesantren->DetailAdd) {
+?>
+<?php if ($Page->getCurrentDetailTable() != "") { ?>
+<h4 class="ew-detail-caption"><?= $Language->tablePhrase("pendidikanpesantren", "TblCaption") ?></h4>
+<?php } ?>
+<?php include_once "PendidikanpesantrenGrid.php" ?>
+<?php } ?>
 <?php if (!$Page->IsModal) { ?>
 <div class="form-group row"><!-- buttons .form-group -->
     <div class="<?= $Page->OffsetColumnClass ?>"><!-- buttons offset -->

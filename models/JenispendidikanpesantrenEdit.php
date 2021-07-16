@@ -552,6 +552,9 @@ class JenispendidikanpesantrenEdit extends Jenispendidikanpesantren
         // Process form if post back
         if ($postBack) {
             $this->loadFormValues(); // Get form values
+
+            // Set up detail parameters
+            $this->setupDetailParms();
         }
 
         // Validate form if post back
@@ -578,9 +581,16 @@ class JenispendidikanpesantrenEdit extends Jenispendidikanpesantren
                     $this->terminate("JenispendidikanpesantrenList"); // No matching record, return to list
                     return;
                 }
+
+                // Set up detail parameters
+                $this->setupDetailParms();
                 break;
             case "update": // Update
-                $returnUrl = $this->getReturnUrl();
+                if ($this->getCurrentDetailTable() != "") { // Master/detail edit
+                    $returnUrl = $this->getViewUrl(Config("TABLE_SHOW_DETAIL") . "=" . $this->getCurrentDetailTable()); // Master/Detail view page
+                } else {
+                    $returnUrl = $this->getReturnUrl();
+                }
                 if (GetPageName($returnUrl) == "JenispendidikanpesantrenList") {
                     $returnUrl = $this->addMasterUrl($returnUrl); // List page, return to List page with correct master key if necessary
                 }
@@ -605,6 +615,9 @@ class JenispendidikanpesantrenEdit extends Jenispendidikanpesantren
                 } else {
                     $this->EventCancelled = true; // Event cancelled
                     $this->restoreFormValues(); // Restore form values if update failed
+
+                    // Set up detail parameters
+                    $this->setupDetailParms();
                 }
         }
 
@@ -818,6 +831,13 @@ class JenispendidikanpesantrenEdit extends Jenispendidikanpesantren
             }
         }
 
+        // Validate detail grid
+        $detailTblVar = explode(",", $this->getCurrentDetailTable());
+        $detailPage = Container("PendidikanpesantrenGrid");
+        if (in_array("pendidikanpesantren", $detailTblVar) && $detailPage->DetailEdit) {
+            $detailPage->validateGridForm();
+        }
+
         // Return validate result
         $validateForm = !$this->hasInvalidFields();
 
@@ -845,6 +865,11 @@ class JenispendidikanpesantrenEdit extends Jenispendidikanpesantren
             $this->setFailureMessage($Language->phrase("NoRecord")); // Set no record message
             $editRow = false; // Update Failed
         } else {
+            // Begin transaction
+            if ($this->getCurrentDetailTable() != "") {
+                $conn->beginTransaction();
+            }
+
             // Save old values
             $this->loadDbValues($rsold);
             $rsnew = [];
@@ -865,6 +890,26 @@ class JenispendidikanpesantrenEdit extends Jenispendidikanpesantren
                     $editRow = true; // No field to update
                 }
                 if ($editRow) {
+                }
+
+                // Update detail records
+                $detailTblVar = explode(",", $this->getCurrentDetailTable());
+                if ($editRow) {
+                    $detailPage = Container("PendidikanpesantrenGrid");
+                    if (in_array("pendidikanpesantren", $detailTblVar) && $detailPage->DetailEdit) {
+                        $Security->loadCurrentUserLevel($this->ProjectID . "pendidikanpesantren"); // Load user level of detail table
+                        $editRow = $detailPage->gridUpdate();
+                        $Security->loadCurrentUserLevel($this->ProjectID . $this->TableName); // Restore user level of master table
+                    }
+                }
+
+                // Commit/Rollback transaction
+                if ($this->getCurrentDetailTable() != "") {
+                    if ($editRow) {
+                        $conn->commit(); // Commit transaction
+                    } else {
+                        $conn->rollback(); // Rollback transaction
+                    }
                 }
             } else {
                 if ($this->getSuccessMessage() != "" || $this->getFailureMessage() != "") {
@@ -894,6 +939,36 @@ class JenispendidikanpesantrenEdit extends Jenispendidikanpesantren
             WriteJson(["success" => true, $this->TableVar => $row]);
         }
         return $editRow;
+    }
+
+    // Set up detail parms based on QueryString
+    protected function setupDetailParms()
+    {
+        // Get the keys for master table
+        $detailTblVar = Get(Config("TABLE_SHOW_DETAIL"));
+        if ($detailTblVar !== null) {
+            $this->setCurrentDetailTable($detailTblVar);
+        } else {
+            $detailTblVar = $this->getCurrentDetailTable();
+        }
+        if ($detailTblVar != "") {
+            $detailTblVar = explode(",", $detailTblVar);
+            if (in_array("pendidikanpesantren", $detailTblVar)) {
+                $detailPageObj = Container("PendidikanpesantrenGrid");
+                if ($detailPageObj->DetailEdit) {
+                    $detailPageObj->CurrentMode = "edit";
+                    $detailPageObj->CurrentAction = "gridedit";
+
+                    // Save current master table to detail table
+                    $detailPageObj->setCurrentMasterTable($this->TableVar);
+                    $detailPageObj->setStartRecordNumber(1);
+                    $detailPageObj->idjenispp->IsDetailKey = true;
+                    $detailPageObj->idjenispp->CurrentValue = $this->id->CurrentValue;
+                    $detailPageObj->idjenispp->setSessionValue($detailPageObj->idjenispp->CurrentValue);
+                    $detailPageObj->pid->setSessionValue(""); // Clear session key
+                }
+            }
+        }
     }
 
     // Set up Breadcrumb

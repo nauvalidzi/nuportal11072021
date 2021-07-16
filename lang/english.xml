@@ -1402,6 +1402,12 @@
       <field id="updated_at">
         <phrase id="fldcaption" value="updated at" />
       </field>
+      <field id="tgl_validasi_cabang">
+        <phrase id="fldcaption" value="tgl validasi cabang" />
+      </field>
+      <field id="tgl_validasi_pusat">
+        <phrase id="fldcaption" value="tgl validasi pusat" />
+      </field>
     </table>
     <table id="santrikitabkuning">
       <phrase id="tblcaption" value="Data Santri Kitab Kuning" />

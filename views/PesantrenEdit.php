@@ -29,8 +29,6 @@ loadjs.ready("head", function () {
         ["kecamatan", [fields.kecamatan.visible && fields.kecamatan.required ? ew.Validators.required(fields.kecamatan.caption) : null], fields.kecamatan.isInvalid],
         ["desa", [fields.desa.visible && fields.desa.required ? ew.Validators.required(fields.desa.caption) : null], fields.desa.isInvalid],
         ["kodepos", [fields.kodepos.visible && fields.kodepos.required ? ew.Validators.required(fields.kodepos.caption) : null], fields.kodepos.isInvalid],
-        ["latitude", [fields.latitude.visible && fields.latitude.required ? ew.Validators.required(fields.latitude.caption) : null], fields.latitude.isInvalid],
-        ["longitude", [fields.longitude.visible && fields.longitude.required ? ew.Validators.required(fields.longitude.caption) : null], fields.longitude.isInvalid],
         ["telpon", [fields.telpon.visible && fields.telpon.required ? ew.Validators.required(fields.telpon.caption) : null], fields.telpon.isInvalid],
         ["web", [fields.web.visible && fields.web.required ? ew.Validators.required(fields.web.caption) : null], fields.web.isInvalid],
         ["_email", [fields._email.visible && fields._email.required ? ew.Validators.required(fields._email.caption) : null], fields._email.isInvalid],
@@ -333,30 +331,6 @@ loadjs.ready("head", function() {
 <input type="<?= $Page->kodepos->getInputTextType() ?>" data-table="pesantren" data-field="x_kodepos" name="x_kodepos" id="x_kodepos" size="30" maxlength="255" value="<?= $Page->kodepos->EditValue ?>"<?= $Page->kodepos->editAttributes() ?> aria-describedby="x_kodepos_help">
 <?= $Page->kodepos->getCustomMessage() ?>
 <div class="invalid-feedback"><?= $Page->kodepos->getErrorMessage() ?></div>
-</span>
-</div></div>
-    </div>
-<?php } ?>
-<?php if ($Page->latitude->Visible) { // latitude ?>
-    <div id="r_latitude" class="form-group row">
-        <label id="elh_pesantren_latitude" for="x_latitude" class="<?= $Page->LeftColumnClass ?>"><?= $Page->latitude->caption() ?><?= $Page->latitude->Required ? $Language->phrase("FieldRequiredIndicator") : "" ?></label>
-        <div class="<?= $Page->RightColumnClass ?>"><div <?= $Page->latitude->cellAttributes() ?>>
-<span id="el_pesantren_latitude">
-<input type="<?= $Page->latitude->getInputTextType() ?>" data-table="pesantren" data-field="x_latitude" name="x_latitude" id="x_latitude" size="30" maxlength="255" value="<?= $Page->latitude->EditValue ?>"<?= $Page->latitude->editAttributes() ?> aria-describedby="x_latitude_help">
-<?= $Page->latitude->getCustomMessage() ?>
-<div class="invalid-feedback"><?= $Page->latitude->getErrorMessage() ?></div>
-</span>
-</div></div>
-    </div>
-<?php } ?>
-<?php if ($Page->longitude->Visible) { // longitude ?>
-    <div id="r_longitude" class="form-group row">
-        <label id="elh_pesantren_longitude" for="x_longitude" class="<?= $Page->LeftColumnClass ?>"><?= $Page->longitude->caption() ?><?= $Page->longitude->Required ? $Language->phrase("FieldRequiredIndicator") : "" ?></label>
-        <div class="<?= $Page->RightColumnClass ?>"><div <?= $Page->longitude->cellAttributes() ?>>
-<span id="el_pesantren_longitude">
-<input type="<?= $Page->longitude->getInputTextType() ?>" data-table="pesantren" data-field="x_longitude" name="x_longitude" id="x_longitude" size="30" maxlength="255" value="<?= $Page->longitude->EditValue ?>"<?= $Page->longitude->editAttributes() ?> aria-describedby="x_longitude_help">
-<?= $Page->longitude->getCustomMessage() ?>
-<div class="invalid-feedback"><?= $Page->longitude->getErrorMessage() ?></div>
 </span>
 </div></div>
     </div>
@@ -792,6 +766,14 @@ loadjs.ready("head", function() {
 <h4 class="ew-detail-caption"><?= $Language->tablePhrase("fasilitaspesantren", "TblCaption") ?></h4>
 <?php } ?>
 <?php include_once "FasilitaspesantrenGrid.php" ?>
+<?php } ?>
+<?php
+    if (in_array("pendidikanpesantren", explode(",", $Page->getCurrentDetailTable())) && $pendidikanpesantren->DetailEdit) {
+?>
+<?php if ($Page->getCurrentDetailTable() != "") { ?>
+<h4 class="ew-detail-caption"><?= $Language->tablePhrase("pendidikanpesantren", "TblCaption") ?></h4>
+<?php } ?>
+<?php include_once "PendidikanpesantrenGrid.php" ?>
 <?php } ?>
 <?php if (!$Page->IsModal) { ?>
 <div class="form-group row"><!-- buttons .form-group -->
