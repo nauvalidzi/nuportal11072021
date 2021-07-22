@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<ew-language date="2021/7/16" version="17.0.5" id="en" name="English" desc="English" author="e.World Technology Limited">
+<ew-language date="2021/7/22" version="17.0.5" id="en" name="English" desc="English" author="e.World Technology Limited">
   <!--
     *** Important Notes:
     1. Language ID should follow: https://developers.google.com/recaptcha/docs/language,
@@ -924,6 +924,9 @@
   </global>
   <project>
     <phrase id="footertext" value="&amp;copy;2021 NU. All rights reserved." />
+    <menu id="53">
+      <phrase id="menutext" value="kodepos" />
+    </menu>
     <menu id="31">
       <phrase id="menutext" value="Jenis Pendidikan Pesantren" />
     </menu>
@@ -1659,6 +1662,18 @@
       </field>
       <field id="dokumen">
         <phrase id="fldcaption" value="Ijin Akhir" />
+      </field>
+    </table>
+    <table id="kodepos">
+      <phrase id="tblcaption" value="kodepos" />
+      <field id="id">
+        <phrase id="fldcaption" value="id" />
+      </field>
+      <field id="kelurahan_id">
+        <phrase id="fldcaption" value="kelurahan id" />
+      </field>
+      <field id="kodepos">
+        <phrase id="fldcaption" value="kodepos" />
       </field>
     </table>
   </project>

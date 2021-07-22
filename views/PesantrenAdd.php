@@ -115,6 +115,7 @@ loadjs.ready("head", function () {
     fpesantrenadd.lists.kabupaten = <?= $Page->kabupaten->toClientList($Page) ?>;
     fpesantrenadd.lists.kecamatan = <?= $Page->kecamatan->toClientList($Page) ?>;
     fpesantrenadd.lists.desa = <?= $Page->desa->toClientList($Page) ?>;
+    fpesantrenadd.lists.kodepos = <?= $Page->kodepos->toClientList($Page) ?>;
     fpesantrenadd.lists._userid = <?= $Page->_userid->toClientList($Page) ?>;
     loadjs.done("fpesantrenadd");
 });
@@ -290,6 +291,7 @@ loadjs.ready("head", function() {
         <label id="elh_pesantren_desa" for="x_desa" class="<?= $Page->LeftColumnClass ?>"><?= $Page->desa->caption() ?><?= $Page->desa->Required ? $Language->phrase("FieldRequiredIndicator") : "" ?></label>
         <div class="<?= $Page->RightColumnClass ?>"><div <?= $Page->desa->cellAttributes() ?>>
 <span id="el_pesantren_desa">
+<?php $Page->desa->EditAttrs->prepend("onchange", "ew.updateOptions.call(this);"); ?>
     <select
         id="x_desa"
         name="x_desa"
@@ -322,9 +324,29 @@ loadjs.ready("head", function() {
         <label id="elh_pesantren_kodepos" for="x_kodepos" class="<?= $Page->LeftColumnClass ?>"><?= $Page->kodepos->caption() ?><?= $Page->kodepos->Required ? $Language->phrase("FieldRequiredIndicator") : "" ?></label>
         <div class="<?= $Page->RightColumnClass ?>"><div <?= $Page->kodepos->cellAttributes() ?>>
 <span id="el_pesantren_kodepos">
-<input type="<?= $Page->kodepos->getInputTextType() ?>" data-table="pesantren" data-field="x_kodepos" name="x_kodepos" id="x_kodepos" size="30" maxlength="255" value="<?= $Page->kodepos->EditValue ?>"<?= $Page->kodepos->editAttributes() ?> aria-describedby="x_kodepos_help">
-<?= $Page->kodepos->getCustomMessage() ?>
-<div class="invalid-feedback"><?= $Page->kodepos->getErrorMessage() ?></div>
+    <select
+        id="x_kodepos"
+        name="x_kodepos"
+        class="form-control ew-select<?= $Page->kodepos->isInvalidClass() ?>"
+        data-select2-id="pesantren_x_kodepos"
+        data-table="pesantren"
+        data-field="x_kodepos"
+        data-value-separator="<?= $Page->kodepos->displayValueSeparatorAttribute() ?>"
+        <?= $Page->kodepos->editAttributes() ?>>
+        <?= $Page->kodepos->selectOptionListHtml("x_kodepos") ?>
+    </select>
+    <?= $Page->kodepos->getCustomMessage() ?>
+    <div class="invalid-feedback"><?= $Page->kodepos->getErrorMessage() ?></div>
+<?= $Page->kodepos->Lookup->getParamTag($Page, "p_x_kodepos") ?>
+<script>
+loadjs.ready("head", function() {
+    var el = document.querySelector("select[data-select2-id='pesantren_x_kodepos']"),
+        options = { name: "x_kodepos", selectId: "pesantren_x_kodepos", language: ew.LANGUAGE_ID, dir: ew.IS_RTL ? "rtl" : "ltr" };
+    options.dropdownParent = $(el).closest("#ew-modal-dialog, #ew-add-opt-dialog")[0];
+    Object.assign(options, ew.vars.tables.pesantren.fields.kodepos.selectOptions);
+    ew.createSelect(options);
+});
+</script>
 </span>
 </div></div>
     </div>

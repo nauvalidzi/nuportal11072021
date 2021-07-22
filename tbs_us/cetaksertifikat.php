@@ -1,6 +1,7 @@
 <?php
 
-include('database.php');
+include('database.php');;
+include('helper.php');
 include_once('tbs_class.php');
 include_once('tbs_plugin_opentbs.php');
 
@@ -8,9 +9,7 @@ include_once('tbs_plugin_opentbs.php');
 
 $id = $_GET['id'];
 
-$sqloa = mysqli_query($con,"SELECT p.kode as kode, p.nama as nama,p.jalan as jalan,kl.`name` as desa, kc.`name` as kecamatan, kb.`name` as kabupaten, pv.`name` as provinsi, p.kodepos as kodepos, pp.nama as pengasuh FROM `pesantren` p LEFT JOIN pengasuhpppria pp ON p.id = pp.pid LEFT JOIN kelurahans kl ON kl.id=p.desa LEFT JOIN kecamatans kc ON kc.id=p.kecamatan LEFT JOIN kabupatens kb ON kb.id=p.kabupaten LEFT JOIN provinsis pv ON pv.id=p.propinsi where p.id = $id LIMIT 1");
-
-
+$sqloa = mysqli_query($con,"SELECT p.kode as kode, p.nama as nama,p.jalan as jalan,kl.`name` as desa, kc.`name` as kecamatan, kb.`name` as kabupaten, pv.`name` as provinsi, p.kodepos as kodepos, pp.nama as pengasuh, p.tgl_validasi_pusat FROM `pesantren` p LEFT JOIN pengasuhpppria pp ON p.id = pp.pid LEFT JOIN kelurahans kl ON kl.id=p.desa LEFT JOIN kecamatans kc ON kc.id=p.kecamatan LEFT JOIN kabupatens kb ON kb.id=p.kabupaten LEFT JOIN provinsis pv ON pv.id=p.propinsi where p.id = $id LIMIT 1");
 
 $i=0;
 
@@ -34,9 +33,10 @@ while($row = mysqli_fetch_array($sqloa))
 
     $pengasuh = $row['pengasuh'];
 
+    $tgl_validasi_masehi = date('d-m-y',strtotime($row['tgl_validasi_pusat']));
+
+    $tgl_validasi_hijriah = date_hijriah($row['tgl_validasi_pusat']);
 }
-
-
 
 $TBS = new clsTinyButStrong;
 
@@ -60,10 +60,11 @@ $kodepos = $kodepos;
 
 $pengasuh = $pengasuh;
 
+$tgl_validasi_masehi = $tgl_validasi_masehi;
 
+$tgl_validasi_hijriah = $tgl_validasi_hijriah;
 
   //$TBS->Show();
-
 $TBS->Show(OPENTBS_DOWNLOAD, 'sertifikat_'.$no_anggota.'.docx');
 
 ?>

@@ -328,6 +328,23 @@ return function (App $app) {
         }
     );
 
+    // kodepos
+    $app->any('/KodeposList[/{id}]', KodeposController::class . ':list')->add(PermissionMiddleware::class)->setName('KodeposList-kodepos-list'); // list
+    $app->any('/KodeposAdd[/{id}]', KodeposController::class . ':add')->add(PermissionMiddleware::class)->setName('KodeposAdd-kodepos-add'); // add
+    $app->any('/KodeposView[/{id}]', KodeposController::class . ':view')->add(PermissionMiddleware::class)->setName('KodeposView-kodepos-view'); // view
+    $app->any('/KodeposEdit[/{id}]', KodeposController::class . ':edit')->add(PermissionMiddleware::class)->setName('KodeposEdit-kodepos-edit'); // edit
+    $app->any('/KodeposDelete[/{id}]', KodeposController::class . ':delete')->add(PermissionMiddleware::class)->setName('KodeposDelete-kodepos-delete'); // delete
+    $app->group(
+        '/kodepos',
+        function (RouteCollectorProxy $group) {
+            $group->any('/' . Config("LIST_ACTION") . '[/{id}]', KodeposController::class . ':list')->add(PermissionMiddleware::class)->setName('kodepos/list-kodepos-list-2'); // list
+            $group->any('/' . Config("ADD_ACTION") . '[/{id}]', KodeposController::class . ':add')->add(PermissionMiddleware::class)->setName('kodepos/add-kodepos-add-2'); // add
+            $group->any('/' . Config("VIEW_ACTION") . '[/{id}]', KodeposController::class . ':view')->add(PermissionMiddleware::class)->setName('kodepos/view-kodepos-view-2'); // view
+            $group->any('/' . Config("EDIT_ACTION") . '[/{id}]', KodeposController::class . ':edit')->add(PermissionMiddleware::class)->setName('kodepos/edit-kodepos-edit-2'); // edit
+            $group->any('/' . Config("DELETE_ACTION") . '[/{id}]', KodeposController::class . ':delete')->add(PermissionMiddleware::class)->setName('kodepos/delete-kodepos-delete-2'); // delete
+        }
+    );
+
     // error
     $app->any('/error', OthersController::class . ':error')->add(PermissionMiddleware::class)->setName('error');
 

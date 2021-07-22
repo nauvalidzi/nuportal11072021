@@ -20,7 +20,6 @@ loadjs.ready("head", function () {
     if (!ew.vars.tables.pesantren)
         ew.vars.tables.pesantren = currentTable;
     fpesantrenedit.addFields([
-        ["kode", [fields.kode.visible && fields.kode.required ? ew.Validators.required(fields.kode.caption) : null], fields.kode.isInvalid],
         ["nama", [fields.nama.visible && fields.nama.required ? ew.Validators.required(fields.nama.caption) : null], fields.nama.isInvalid],
         ["deskripsi", [fields.deskripsi.visible && fields.deskripsi.required ? ew.Validators.required(fields.deskripsi.caption) : null], fields.deskripsi.isInvalid],
         ["jalan", [fields.jalan.visible && fields.jalan.required ? ew.Validators.required(fields.jalan.caption) : null], fields.jalan.isInvalid],
@@ -118,6 +117,7 @@ loadjs.ready("head", function () {
     fpesantrenedit.lists.kabupaten = <?= $Page->kabupaten->toClientList($Page) ?>;
     fpesantrenedit.lists.kecamatan = <?= $Page->kecamatan->toClientList($Page) ?>;
     fpesantrenedit.lists.desa = <?= $Page->desa->toClientList($Page) ?>;
+    fpesantrenedit.lists.kodepos = <?= $Page->kodepos->toClientList($Page) ?>;
     fpesantrenedit.lists.validasi = <?= $Page->validasi->toClientList($Page) ?>;
     fpesantrenedit.lists.validator = <?= $Page->validator->toClientList($Page) ?>;
     fpesantrenedit.lists.validasi_pusat = <?= $Page->validasi_pusat->toClientList($Page) ?>;
@@ -144,18 +144,6 @@ $Page->showMessage();
 <input type="hidden" name="modal" value="<?= (int)$Page->IsModal ?>">
 <input type="hidden" name="<?= $Page->OldKeyName ?>" value="<?= $Page->OldKey ?>">
 <div class="ew-edit-div"><!-- page* -->
-<?php if ($Page->kode->Visible) { // kode ?>
-    <div id="r_kode" class="form-group row">
-        <label id="elh_pesantren_kode" for="x_kode" class="<?= $Page->LeftColumnClass ?>"><?= $Page->kode->caption() ?><?= $Page->kode->Required ? $Language->phrase("FieldRequiredIndicator") : "" ?></label>
-        <div class="<?= $Page->RightColumnClass ?>"><div <?= $Page->kode->cellAttributes() ?>>
-<span id="el_pesantren_kode">
-<span<?= $Page->kode->viewAttributes() ?>>
-<input type="text" readonly class="form-control-plaintext" value="<?= HtmlEncode(RemoveHtml($Page->kode->getDisplayValue($Page->kode->EditValue))) ?>"></span>
-</span>
-<input type="hidden" data-table="pesantren" data-field="x_kode" data-hidden="1" name="x_kode" id="x_kode" value="<?= HtmlEncode($Page->kode->CurrentValue) ?>">
-</div></div>
-    </div>
-<?php } ?>
 <?php if ($Page->nama->Visible) { // nama ?>
     <div id="r_nama" class="form-group row">
         <label id="elh_pesantren_nama" for="x_nama" class="<?= $Page->LeftColumnClass ?>"><?= $Page->nama->caption() ?><?= $Page->nama->Required ? $Language->phrase("FieldRequiredIndicator") : "" ?></label>
@@ -296,6 +284,7 @@ loadjs.ready("head", function() {
         <label id="elh_pesantren_desa" for="x_desa" class="<?= $Page->LeftColumnClass ?>"><?= $Page->desa->caption() ?><?= $Page->desa->Required ? $Language->phrase("FieldRequiredIndicator") : "" ?></label>
         <div class="<?= $Page->RightColumnClass ?>"><div <?= $Page->desa->cellAttributes() ?>>
 <span id="el_pesantren_desa">
+<?php $Page->desa->EditAttrs->prepend("onchange", "ew.updateOptions.call(this);"); ?>
     <select
         id="x_desa"
         name="x_desa"
@@ -328,9 +317,29 @@ loadjs.ready("head", function() {
         <label id="elh_pesantren_kodepos" for="x_kodepos" class="<?= $Page->LeftColumnClass ?>"><?= $Page->kodepos->caption() ?><?= $Page->kodepos->Required ? $Language->phrase("FieldRequiredIndicator") : "" ?></label>
         <div class="<?= $Page->RightColumnClass ?>"><div <?= $Page->kodepos->cellAttributes() ?>>
 <span id="el_pesantren_kodepos">
-<input type="<?= $Page->kodepos->getInputTextType() ?>" data-table="pesantren" data-field="x_kodepos" name="x_kodepos" id="x_kodepos" size="30" maxlength="255" value="<?= $Page->kodepos->EditValue ?>"<?= $Page->kodepos->editAttributes() ?> aria-describedby="x_kodepos_help">
-<?= $Page->kodepos->getCustomMessage() ?>
-<div class="invalid-feedback"><?= $Page->kodepos->getErrorMessage() ?></div>
+    <select
+        id="x_kodepos"
+        name="x_kodepos"
+        class="form-control ew-select<?= $Page->kodepos->isInvalidClass() ?>"
+        data-select2-id="pesantren_x_kodepos"
+        data-table="pesantren"
+        data-field="x_kodepos"
+        data-value-separator="<?= $Page->kodepos->displayValueSeparatorAttribute() ?>"
+        <?= $Page->kodepos->editAttributes() ?>>
+        <?= $Page->kodepos->selectOptionListHtml("x_kodepos") ?>
+    </select>
+    <?= $Page->kodepos->getCustomMessage() ?>
+    <div class="invalid-feedback"><?= $Page->kodepos->getErrorMessage() ?></div>
+<?= $Page->kodepos->Lookup->getParamTag($Page, "p_x_kodepos") ?>
+<script>
+loadjs.ready("head", function() {
+    var el = document.querySelector("select[data-select2-id='pesantren_x_kodepos']"),
+        options = { name: "x_kodepos", selectId: "pesantren_x_kodepos", language: ew.LANGUAGE_ID, dir: ew.IS_RTL ? "rtl" : "ltr" };
+    options.dropdownParent = $(el).closest("#ew-modal-dialog, #ew-add-opt-dialog")[0];
+    Object.assign(options, ew.vars.tables.pesantren.fields.kodepos.selectOptions);
+    ew.createSelect(options);
+});
+</script>
 </span>
 </div></div>
     </div>

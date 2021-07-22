@@ -71,6 +71,7 @@ return [
     "wilayah" => \DI\create(Wilayah::class),
     "jenispendidikanpesantren" => \DI\create(Jenispendidikanpesantren::class),
     "pendidikanpesantren" => \DI\create(Pendidikanpesantren::class),
+    "kodepos" => \DI\create(Kodepos::class),
 
     // User table
     "usertable" => \DI\get("user"),

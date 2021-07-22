@@ -171,7 +171,7 @@ $CONFIG = [
 
     // General
     "UNFORMAT_YEAR" => 50, // Unformat year
-    "RANDOM_KEY" => 'aw3x0Z1NPzO52uAc', // Random key for encryption
+    "RANDOM_KEY" => '8Gm7S0ommsveybE7', // Random key for encryption
     "ENCRYPTION_KEY" => '', // Encryption key for data protection
     "PROJECT_STYLESHEET_FILENAME" => "css/nuportal.css", // Project stylesheet file name
     "PROJECT_CHARSET" => "utf-8", // Project charset

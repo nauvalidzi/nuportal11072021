@@ -468,7 +468,7 @@ class PesantrenEdit extends Pesantren
         $CurrentForm = new HttpForm();
         $this->CurrentAction = Param("action"); // Set up current action
         $this->id->Visible = false;
-        $this->kode->setVisibility();
+        $this->kode->Visible = false;
         $this->nama->setVisibility();
         $this->deskripsi->setVisibility();
         $this->jalan->setVisibility();
@@ -525,6 +525,7 @@ class PesantrenEdit extends Pesantren
         $this->setupLookupOptions($this->kabupaten);
         $this->setupLookupOptions($this->kecamatan);
         $this->setupLookupOptions($this->desa);
+        $this->setupLookupOptions($this->kodepos);
         $this->setupLookupOptions($this->_userid);
         $this->setupLookupOptions($this->validator);
         $this->setupLookupOptions($this->validator_pusat);
@@ -718,16 +719,6 @@ class PesantrenEdit extends Pesantren
     {
         // Load from form
         global $CurrentForm;
-
-        // Check field name 'kode' first before field var 'x_kode'
-        $val = $CurrentForm->hasValue("kode") ? $CurrentForm->getValue("kode") : $CurrentForm->getValue("x_kode");
-        if (!$this->kode->IsDetailKey) {
-            if (IsApi() && $val === null) {
-                $this->kode->Visible = false; // Disable update for API request
-            } else {
-                $this->kode->setFormValue($val);
-            }
-        }
 
         // Check field name 'nama' first before field var 'x_nama'
         $val = $CurrentForm->hasValue("nama") ? $CurrentForm->getValue("nama") : $CurrentForm->getValue("x_nama");
@@ -975,7 +966,6 @@ class PesantrenEdit extends Pesantren
     {
         global $CurrentForm;
         $this->id->CurrentValue = $this->id->FormValue;
-        $this->kode->CurrentValue = $this->kode->FormValue;
         $this->nama->CurrentValue = $this->nama->FormValue;
         $this->deskripsi->CurrentValue = $this->deskripsi->FormValue;
         $this->jalan->CurrentValue = $this->jalan->FormValue;
@@ -1366,7 +1356,24 @@ class PesantrenEdit extends Pesantren
             $this->desa->ViewCustomAttributes = "";
 
             // kodepos
-            $this->kodepos->ViewValue = $this->kodepos->CurrentValue;
+            $curVal = trim(strval($this->kodepos->CurrentValue));
+            if ($curVal != "") {
+                $this->kodepos->ViewValue = $this->kodepos->lookupCacheOption($curVal);
+                if ($this->kodepos->ViewValue === null) { // Lookup from database
+                    $filterWrk = "`kodepos`" . SearchString("=", $curVal, DATATYPE_STRING, "");
+                    $sqlWrk = $this->kodepos->Lookup->getSql(false, $filterWrk, '', $this, true, true);
+                    $rswrk = Conn()->executeQuery($sqlWrk)->fetchAll(\PDO::FETCH_BOTH);
+                    $ari = count($rswrk);
+                    if ($ari > 0) { // Lookup values found
+                        $arwrk = $this->kodepos->Lookup->renderViewRow($rswrk[0]);
+                        $this->kodepos->ViewValue = $this->kodepos->displayValue($arwrk);
+                    } else {
+                        $this->kodepos->ViewValue = $this->kodepos->CurrentValue;
+                    }
+                }
+            } else {
+                $this->kodepos->ViewValue = null;
+            }
             $this->kodepos->ViewCustomAttributes = "";
 
             // telpon
@@ -1562,11 +1569,6 @@ class PesantrenEdit extends Pesantren
             $this->tgl_validasi_pusat->ViewValue = FormatDateTime($this->tgl_validasi_pusat->ViewValue, 0);
             $this->tgl_validasi_pusat->ViewCustomAttributes = "";
 
-            // kode
-            $this->kode->LinkCustomAttributes = "";
-            $this->kode->HrefValue = "";
-            $this->kode->TooltipValue = "";
-
             // nama
             $this->nama->LinkCustomAttributes = "";
             $this->nama->HrefValue = "";
@@ -1751,12 +1753,6 @@ class PesantrenEdit extends Pesantren
             $this->validator_pusat->HrefValue = "";
             $this->validator_pusat->TooltipValue = "";
         } elseif ($this->RowType == ROWTYPE_EDIT) {
-            // kode
-            $this->kode->EditAttrs["class"] = "form-control";
-            $this->kode->EditCustomAttributes = "readonly";
-            $this->kode->EditValue = $this->kode->CurrentValue;
-            $this->kode->ViewCustomAttributes = "";
-
             // nama
             $this->nama->EditAttrs["class"] = "form-control";
             $this->nama->EditCustomAttributes = "";
@@ -1877,10 +1873,26 @@ class PesantrenEdit extends Pesantren
             // kodepos
             $this->kodepos->EditAttrs["class"] = "form-control";
             $this->kodepos->EditCustomAttributes = "";
-            if (!$this->kodepos->Raw) {
-                $this->kodepos->CurrentValue = HtmlDecode($this->kodepos->CurrentValue);
+            $curVal = trim(strval($this->kodepos->CurrentValue));
+            if ($curVal != "") {
+                $this->kodepos->ViewValue = $this->kodepos->lookupCacheOption($curVal);
+            } else {
+                $this->kodepos->ViewValue = $this->kodepos->Lookup !== null && is_array($this->kodepos->Lookup->Options) ? $curVal : null;
             }
-            $this->kodepos->EditValue = HtmlEncode($this->kodepos->CurrentValue);
+            if ($this->kodepos->ViewValue !== null) { // Load from cache
+                $this->kodepos->EditValue = array_values($this->kodepos->Lookup->Options);
+            } else { // Lookup from database
+                if ($curVal == "") {
+                    $filterWrk = "0=1";
+                } else {
+                    $filterWrk = "`kodepos`" . SearchString("=", $this->kodepos->CurrentValue, DATATYPE_STRING, "");
+                }
+                $sqlWrk = $this->kodepos->Lookup->getSql(true, $filterWrk, '', $this, false, true);
+                $rswrk = Conn()->executeQuery($sqlWrk)->fetchAll(\PDO::FETCH_BOTH);
+                $ari = count($rswrk);
+                $arwrk = $rswrk;
+                $this->kodepos->EditValue = $arwrk;
+            }
 
             // telpon
             $this->telpon->EditAttrs["class"] = "form-control";
@@ -2096,11 +2108,6 @@ class PesantrenEdit extends Pesantren
 
             // Edit refer script
 
-            // kode
-            $this->kode->LinkCustomAttributes = "";
-            $this->kode->HrefValue = "";
-            $this->kode->TooltipValue = "";
-
             // nama
             $this->nama->LinkCustomAttributes = "";
             $this->nama->HrefValue = "";
@@ -2255,11 +2262,6 @@ class PesantrenEdit extends Pesantren
         // Check if validation required
         if (!Config("SERVER_VALIDATE")) {
             return true;
-        }
-        if ($this->kode->Required) {
-            if (!$this->kode->IsDetailKey && EmptyValue($this->kode->FormValue)) {
-                $this->kode->addErrorMessage(str_replace("%s", $this->kode->caption(), $this->kode->RequiredErrorMessage));
-            }
         }
         if ($this->nama->Required) {
             if (!$this->nama->IsDetailKey && EmptyValue($this->nama->FormValue)) {
@@ -2456,23 +2458,6 @@ class PesantrenEdit extends Pesantren
         $oldKeyFilter = $this->getRecordFilter();
         $filter = $this->applyUserIDFilters($oldKeyFilter);
         $conn = $this->getConnection();
-        if ($this->kode->CurrentValue != "") { // Check field with unique index
-            $filterChk = "(`kode` = '" . AdjustSql($this->kode->CurrentValue, $this->Dbid) . "')";
-            $filterChk .= " AND NOT (" . $filter . ")";
-            $this->CurrentFilter = $filterChk;
-            $sqlChk = $this->getCurrentSql();
-            $rsChk = $conn->executeQuery($sqlChk);
-            if (!$rsChk) {
-                return false;
-            }
-            if ($rsChk->fetch()) {
-                $idxErrMsg = str_replace("%f", $this->kode->caption(), $Language->phrase("DupIndex"));
-                $idxErrMsg = str_replace("%v", $this->kode->CurrentValue, $idxErrMsg);
-                $this->setFailureMessage($idxErrMsg);
-                $rsChk->closeCursor();
-                return false;
-            }
-        }
         $this->CurrentFilter = $filter;
         $sql = $this->getCurrentSql();
         $rsold = $conn->fetchAssoc($sql);
@@ -3165,6 +3150,8 @@ class PesantrenEdit extends Pesantren
                 case "x_kecamatan":
                     break;
                 case "x_desa":
+                    break;
+                case "x_kodepos":
                     break;
                 case "x__userid":
                     break;

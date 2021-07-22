@@ -195,18 +195,28 @@ class Pesantren extends DbTable
         $this->desa->PleaseSelectText = $Language->phrase("PleaseSelect"); // "PleaseSelect" text
         switch ($CurrentLanguage) {
             case "en":
-                $this->desa->Lookup = new Lookup('desa', 'kelurahans', false, 'id', ["name","","",""], ["x_kecamatan"], [], ["kecamatan_id"], ["x_kecamatan_id"], [], [], '', '');
+                $this->desa->Lookup = new Lookup('desa', 'kelurahans', false, 'id', ["name","","",""], ["x_kecamatan"], ["x_kodepos"], ["kecamatan_id"], ["x_kecamatan_id"], [], [], '', '');
                 break;
             default:
-                $this->desa->Lookup = new Lookup('desa', 'kelurahans', false, 'id', ["name","","",""], ["x_kecamatan"], [], ["kecamatan_id"], ["x_kecamatan_id"], [], [], '', '');
+                $this->desa->Lookup = new Lookup('desa', 'kelurahans', false, 'id', ["name","","",""], ["x_kecamatan"], ["x_kodepos"], ["kecamatan_id"], ["x_kecamatan_id"], [], [], '', '');
                 break;
         }
         $this->desa->CustomMsg = $Language->FieldPhrase($this->TableVar, $this->desa->Param, "CustomMsg");
         $this->Fields['desa'] = &$this->desa;
 
         // kodepos
-        $this->kodepos = new DbField('pesantren', 'pesantren', 'x_kodepos', 'kodepos', '`kodepos`', '`kodepos`', 200, 255, -1, false, '`kodepos`', false, false, false, 'FORMATTED TEXT', 'TEXT');
+        $this->kodepos = new DbField('pesantren', 'pesantren', 'x_kodepos', 'kodepos', '`kodepos`', '`kodepos`', 200, 255, -1, false, '`kodepos`', false, false, false, 'FORMATTED TEXT', 'SELECT');
         $this->kodepos->Sortable = true; // Allow sort
+        $this->kodepos->UsePleaseSelect = true; // Use PleaseSelect by default
+        $this->kodepos->PleaseSelectText = $Language->phrase("PleaseSelect"); // "PleaseSelect" text
+        switch ($CurrentLanguage) {
+            case "en":
+                $this->kodepos->Lookup = new Lookup('kodepos', 'kodepos', false, 'kodepos', ["kodepos","","",""], ["x_desa"], [], ["kelurahan_id"], ["x_kelurahan_id"], [], [], '', '');
+                break;
+            default:
+                $this->kodepos->Lookup = new Lookup('kodepos', 'kodepos', false, 'kodepos', ["kodepos","","",""], ["x_desa"], [], ["kelurahan_id"], ["x_kelurahan_id"], [], [], '', '');
+                break;
+        }
         $this->kodepos->CustomMsg = $Language->FieldPhrase($this->TableVar, $this->kodepos->Param, "CustomMsg");
         $this->Fields['kodepos'] = &$this->kodepos;
 
@@ -1884,7 +1894,24 @@ SORTHTML;
         $this->desa->ViewCustomAttributes = "";
 
         // kodepos
-        $this->kodepos->ViewValue = $this->kodepos->CurrentValue;
+        $curVal = trim(strval($this->kodepos->CurrentValue));
+        if ($curVal != "") {
+            $this->kodepos->ViewValue = $this->kodepos->lookupCacheOption($curVal);
+            if ($this->kodepos->ViewValue === null) { // Lookup from database
+                $filterWrk = "`kodepos`" . SearchString("=", $curVal, DATATYPE_STRING, "");
+                $sqlWrk = $this->kodepos->Lookup->getSql(false, $filterWrk, '', $this, true, true);
+                $rswrk = Conn()->executeQuery($sqlWrk)->fetchAll(\PDO::FETCH_BOTH);
+                $ari = count($rswrk);
+                if ($ari > 0) { // Lookup values found
+                    $arwrk = $this->kodepos->Lookup->renderViewRow($rswrk[0]);
+                    $this->kodepos->ViewValue = $this->kodepos->displayValue($arwrk);
+                } else {
+                    $this->kodepos->ViewValue = $this->kodepos->CurrentValue;
+                }
+            }
+        } else {
+            $this->kodepos->ViewValue = null;
+        }
         $this->kodepos->ViewCustomAttributes = "";
 
         // latitude
@@ -2421,10 +2448,6 @@ SORTHTML;
         // kodepos
         $this->kodepos->EditAttrs["class"] = "form-control";
         $this->kodepos->EditCustomAttributes = "";
-        if (!$this->kodepos->Raw) {
-            $this->kodepos->CurrentValue = HtmlDecode($this->kodepos->CurrentValue);
-        }
-        $this->kodepos->EditValue = $this->kodepos->CurrentValue;
 
         // latitude
         $this->latitude->EditAttrs["class"] = "form-control";

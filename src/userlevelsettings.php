@@ -47,7 +47,9 @@ $USER_LEVEL_PRIVS = [["{1FAB4C92-5B97-4B2C-B4F4-C3AA3E8F827A}fasilitasusaha","-2
     ["{1FAB4C92-5B97-4B2C-B4F4-C3AA3E8F827A}jenispendidikanpesantren","-2","0"],
     ["{1FAB4C92-5B97-4B2C-B4F4-C3AA3E8F827A}jenispendidikanpesantren","0","0"],
     ["{1FAB4C92-5B97-4B2C-B4F4-C3AA3E8F827A}pendidikanpesantren","-2","0"],
-    ["{1FAB4C92-5B97-4B2C-B4F4-C3AA3E8F827A}pendidikanpesantren","0","0"]];
+    ["{1FAB4C92-5B97-4B2C-B4F4-C3AA3E8F827A}pendidikanpesantren","0","0"],
+    ["{1FAB4C92-5B97-4B2C-B4F4-C3AA3E8F827A}kodepos","-2","0"],
+    ["{1FAB4C92-5B97-4B2C-B4F4-C3AA3E8F827A}kodepos","0","0"]];
 // User level table info
 $USER_LEVEL_TABLES = [["fasilitasusaha","fasilitasusaha","Fasilitas Usaha",true,"{1FAB4C92-5B97-4B2C-B4F4-C3AA3E8F827A}","FasilitasusahaList"],
     ["kitabkuning","kitabkuning","Kitab Kuning",true,"{1FAB4C92-5B97-4B2C-B4F4-C3AA3E8F827A}","KitabkuningList"],
@@ -68,4 +70,5 @@ $USER_LEVEL_TABLES = [["fasilitasusaha","fasilitasusaha","Fasilitas Usaha",true,
     ["jenispendidikanumum","jenispendidikanumum","jenispendidikanumum",true,"{1FAB4C92-5B97-4B2C-B4F4-C3AA3E8F827A}","JenispendidikanumumList"],
     ["wilayah","wilayah","wilayah",true,"{1FAB4C92-5B97-4B2C-B4F4-C3AA3E8F827A}","WilayahList"],
     ["jenispendidikanpesantren","jenispendidikanpesantren","Jenis Pendidikan Pesantren",true,"{1FAB4C92-5B97-4B2C-B4F4-C3AA3E8F827A}","JenispendidikanpesantrenList"],
-    ["pendidikanpesantren","pendidikanpesantren","Pendidikan Pesantren",true,"{1FAB4C92-5B97-4B2C-B4F4-C3AA3E8F827A}","PendidikanpesantrenList"]];
+    ["pendidikanpesantren","pendidikanpesantren","Pendidikan Pesantren",true,"{1FAB4C92-5B97-4B2C-B4F4-C3AA3E8F827A}","PendidikanpesantrenList"],
+    ["kodepos","kodepos","kodepos",true,"{1FAB4C92-5B97-4B2C-B4F4-C3AA3E8F827A}","KodeposList"]];

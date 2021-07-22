@@ -639,6 +639,7 @@ class PesantrenList extends Pesantren
         $this->setupLookupOptions($this->kabupaten);
         $this->setupLookupOptions($this->kecamatan);
         $this->setupLookupOptions($this->desa);
+        $this->setupLookupOptions($this->kodepos);
         $this->setupLookupOptions($this->_userid);
         $this->setupLookupOptions($this->validator);
         $this->setupLookupOptions($this->validator_pusat);
@@ -2353,7 +2354,24 @@ class PesantrenList extends Pesantren
             $this->desa->ViewCustomAttributes = "";
 
             // kodepos
-            $this->kodepos->ViewValue = $this->kodepos->CurrentValue;
+            $curVal = trim(strval($this->kodepos->CurrentValue));
+            if ($curVal != "") {
+                $this->kodepos->ViewValue = $this->kodepos->lookupCacheOption($curVal);
+                if ($this->kodepos->ViewValue === null) { // Lookup from database
+                    $filterWrk = "`kodepos`" . SearchString("=", $curVal, DATATYPE_STRING, "");
+                    $sqlWrk = $this->kodepos->Lookup->getSql(false, $filterWrk, '', $this, true, true);
+                    $rswrk = Conn()->executeQuery($sqlWrk)->fetchAll(\PDO::FETCH_BOTH);
+                    $ari = count($rswrk);
+                    if ($ari > 0) { // Lookup values found
+                        $arwrk = $this->kodepos->Lookup->renderViewRow($rswrk[0]);
+                        $this->kodepos->ViewValue = $this->kodepos->displayValue($arwrk);
+                    } else {
+                        $this->kodepos->ViewValue = $this->kodepos->CurrentValue;
+                    }
+                }
+            } else {
+                $this->kodepos->ViewValue = null;
+            }
             $this->kodepos->ViewCustomAttributes = "";
 
             // telpon
@@ -2694,6 +2712,8 @@ class PesantrenList extends Pesantren
                 case "x_kecamatan":
                     break;
                 case "x_desa":
+                    break;
+                case "x_kodepos":
                     break;
                 case "x__userid":
                     break;

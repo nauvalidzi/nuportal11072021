@@ -522,6 +522,7 @@ class PesantrenAdd extends Pesantren
         $this->setupLookupOptions($this->kabupaten);
         $this->setupLookupOptions($this->kecamatan);
         $this->setupLookupOptions($this->desa);
+        $this->setupLookupOptions($this->kodepos);
         $this->setupLookupOptions($this->_userid);
         $this->setupLookupOptions($this->validator);
         $this->setupLookupOptions($this->validator_pusat);
@@ -1378,7 +1379,24 @@ class PesantrenAdd extends Pesantren
             $this->desa->ViewCustomAttributes = "";
 
             // kodepos
-            $this->kodepos->ViewValue = $this->kodepos->CurrentValue;
+            $curVal = trim(strval($this->kodepos->CurrentValue));
+            if ($curVal != "") {
+                $this->kodepos->ViewValue = $this->kodepos->lookupCacheOption($curVal);
+                if ($this->kodepos->ViewValue === null) { // Lookup from database
+                    $filterWrk = "`kodepos`" . SearchString("=", $curVal, DATATYPE_STRING, "");
+                    $sqlWrk = $this->kodepos->Lookup->getSql(false, $filterWrk, '', $this, true, true);
+                    $rswrk = Conn()->executeQuery($sqlWrk)->fetchAll(\PDO::FETCH_BOTH);
+                    $ari = count($rswrk);
+                    if ($ari > 0) { // Lookup values found
+                        $arwrk = $this->kodepos->Lookup->renderViewRow($rswrk[0]);
+                        $this->kodepos->ViewValue = $this->kodepos->displayValue($arwrk);
+                    } else {
+                        $this->kodepos->ViewValue = $this->kodepos->CurrentValue;
+                    }
+                }
+            } else {
+                $this->kodepos->ViewValue = null;
+            }
             $this->kodepos->ViewCustomAttributes = "";
 
             // telpon
@@ -1876,10 +1894,26 @@ class PesantrenAdd extends Pesantren
             // kodepos
             $this->kodepos->EditAttrs["class"] = "form-control";
             $this->kodepos->EditCustomAttributes = "";
-            if (!$this->kodepos->Raw) {
-                $this->kodepos->CurrentValue = HtmlDecode($this->kodepos->CurrentValue);
+            $curVal = trim(strval($this->kodepos->CurrentValue));
+            if ($curVal != "") {
+                $this->kodepos->ViewValue = $this->kodepos->lookupCacheOption($curVal);
+            } else {
+                $this->kodepos->ViewValue = $this->kodepos->Lookup !== null && is_array($this->kodepos->Lookup->Options) ? $curVal : null;
             }
-            $this->kodepos->EditValue = HtmlEncode($this->kodepos->CurrentValue);
+            if ($this->kodepos->ViewValue !== null) { // Load from cache
+                $this->kodepos->EditValue = array_values($this->kodepos->Lookup->Options);
+            } else { // Lookup from database
+                if ($curVal == "") {
+                    $filterWrk = "0=1";
+                } else {
+                    $filterWrk = "`kodepos`" . SearchString("=", $this->kodepos->CurrentValue, DATATYPE_STRING, "");
+                }
+                $sqlWrk = $this->kodepos->Lookup->getSql(true, $filterWrk, '', $this, false, true);
+                $rswrk = Conn()->executeQuery($sqlWrk)->fetchAll(\PDO::FETCH_BOTH);
+                $ari = count($rswrk);
+                $arwrk = $rswrk;
+                $this->kodepos->EditValue = $arwrk;
+            }
 
             // telpon
             $this->telpon->EditAttrs["class"] = "form-control";
@@ -3148,6 +3182,8 @@ class PesantrenAdd extends Pesantren
                 case "x_kecamatan":
                     break;
                 case "x_desa":
+                    break;
+                case "x_kodepos":
                     break;
                 case "x__userid":
                     break;
