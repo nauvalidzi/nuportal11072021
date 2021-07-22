@@ -385,7 +385,7 @@ loadjs.ready("head", function() {
     <?php if ($Page->aset->Visible) { // aset ?>
         <td data-name="aset">
 <span id="el<?= $Page->RowCount ?>_fasilitasusaha_aset" class="form-group fasilitasusaha_aset">
-<input type="<?= $Page->aset->getInputTextType() ?>" data-table="fasilitasusaha" data-field="x_aset" name="x<?= $Page->RowIndex ?>_aset" id="x<?= $Page->RowIndex ?>_aset" size="30" maxlength="255" value="<?= $Page->aset->EditValue ?>"<?= $Page->aset->editAttributes() ?>>
+<textarea data-table="fasilitasusaha" data-field="x_aset" name="x<?= $Page->RowIndex ?>_aset" id="x<?= $Page->RowIndex ?>_aset" cols="3" rows="4"<?= $Page->aset->editAttributes() ?>><?= $Page->aset->EditValue ?></textarea>
 <div class="invalid-feedback"><?= $Page->aset->getErrorMessage() ?></div>
 </span>
 <input type="hidden" data-table="fasilitasusaha" data-field="x_aset" data-hidden="1" name="o<?= $Page->RowIndex ?>_aset" id="o<?= $Page->RowIndex ?>_aset" value="<?= HtmlEncode($Page->aset->OldValue) ?>">
@@ -740,7 +740,7 @@ loadjs.ready("head", function() {
         <td data-name="aset" <?= $Page->aset->cellAttributes() ?>>
 <?php if ($Page->RowType == ROWTYPE_EDIT) { // Edit record ?>
 <span id="el<?= $Page->RowCount ?>_fasilitasusaha_aset" class="form-group">
-<input type="<?= $Page->aset->getInputTextType() ?>" data-table="fasilitasusaha" data-field="x_aset" name="x<?= $Page->RowIndex ?>_aset" id="x<?= $Page->RowIndex ?>_aset" size="30" maxlength="255" value="<?= $Page->aset->EditValue ?>"<?= $Page->aset->editAttributes() ?>>
+<textarea data-table="fasilitasusaha" data-field="x_aset" name="x<?= $Page->RowIndex ?>_aset" id="x<?= $Page->RowIndex ?>_aset" cols="3" rows="4"<?= $Page->aset->editAttributes() ?>><?= $Page->aset->EditValue ?></textarea>
 <div class="invalid-feedback"><?= $Page->aset->getErrorMessage() ?></div>
 </span>
 <?php } ?>

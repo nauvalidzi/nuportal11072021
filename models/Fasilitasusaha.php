@@ -159,7 +159,7 @@ class Fasilitasusaha extends DbTable
         $this->Fields['potensiblm'] = &$this->potensiblm;
 
         // aset
-        $this->aset = new DbField('fasilitasusaha', 'fasilitasusaha', 'x_aset', 'aset', '`aset`', '`aset`', 200, 255, -1, false, '`aset`', false, false, false, 'FORMATTED TEXT', 'TEXT');
+        $this->aset = new DbField('fasilitasusaha', 'fasilitasusaha', 'x_aset', 'aset', '`aset`', '`aset`', 201, 65535, -1, false, '`aset`', false, false, false, 'FORMATTED TEXT', 'TEXTAREA');
         $this->aset->Sortable = true; // Allow sort
         $this->aset->CustomMsg = $Language->FieldPhrase($this->TableVar, $this->aset->Param, "CustomMsg");
         $this->Fields['aset'] = &$this->aset;
@@ -183,7 +183,7 @@ class Fasilitasusaha extends DbTable
         $this->Fields['kendala'] = &$this->kendala;
 
         // fasilitasperlu
-        $this->fasilitasperlu = new DbField('fasilitasusaha', 'fasilitasusaha', 'x_fasilitasperlu', 'fasilitasperlu', '`fasilitasperlu`', '`fasilitasperlu`', 200, 255, -1, false, '`fasilitasperlu`', false, false, false, 'FORMATTED TEXT', 'TEXTAREA');
+        $this->fasilitasperlu = new DbField('fasilitasusaha', 'fasilitasusaha', 'x_fasilitasperlu', 'fasilitasperlu', '`fasilitasperlu`', '`fasilitasperlu`', 201, 65535, -1, false, '`fasilitasperlu`', false, false, false, 'FORMATTED TEXT', 'TEXTAREA');
         $this->fasilitasperlu->Sortable = true; // Allow sort
         $this->fasilitasperlu->CustomMsg = $Language->FieldPhrase($this->TableVar, $this->fasilitasperlu->Param, "CustomMsg");
         $this->Fields['fasilitasperlu'] = &$this->fasilitasperlu;
@@ -1371,9 +1371,6 @@ SORTHTML;
         // aset
         $this->aset->EditAttrs["class"] = "form-control";
         $this->aset->EditCustomAttributes = "";
-        if (!$this->aset->Raw) {
-            $this->aset->CurrentValue = HtmlDecode($this->aset->CurrentValue);
-        }
         $this->aset->EditValue = $this->aset->CurrentValue;
 
         // modal

@@ -646,14 +646,14 @@ loadjs.ready("head", function() {
         <td data-name="aset" <?= $Grid->aset->cellAttributes() ?>>
 <?php if ($Grid->RowType == ROWTYPE_ADD) { // Add record ?>
 <span id="el<?= $Grid->RowCount ?>_fasilitasusaha_aset" class="form-group">
-<input type="<?= $Grid->aset->getInputTextType() ?>" data-table="fasilitasusaha" data-field="x_aset" name="x<?= $Grid->RowIndex ?>_aset" id="x<?= $Grid->RowIndex ?>_aset" size="30" maxlength="255" value="<?= $Grid->aset->EditValue ?>"<?= $Grid->aset->editAttributes() ?>>
+<textarea data-table="fasilitasusaha" data-field="x_aset" name="x<?= $Grid->RowIndex ?>_aset" id="x<?= $Grid->RowIndex ?>_aset" cols="3" rows="4"<?= $Grid->aset->editAttributes() ?>><?= $Grid->aset->EditValue ?></textarea>
 <div class="invalid-feedback"><?= $Grid->aset->getErrorMessage() ?></div>
 </span>
 <input type="hidden" data-table="fasilitasusaha" data-field="x_aset" data-hidden="1" name="o<?= $Grid->RowIndex ?>_aset" id="o<?= $Grid->RowIndex ?>_aset" value="<?= HtmlEncode($Grid->aset->OldValue) ?>">
 <?php } ?>
 <?php if ($Grid->RowType == ROWTYPE_EDIT) { // Edit record ?>
 <span id="el<?= $Grid->RowCount ?>_fasilitasusaha_aset" class="form-group">
-<input type="<?= $Grid->aset->getInputTextType() ?>" data-table="fasilitasusaha" data-field="x_aset" name="x<?= $Grid->RowIndex ?>_aset" id="x<?= $Grid->RowIndex ?>_aset" size="30" maxlength="255" value="<?= $Grid->aset->EditValue ?>"<?= $Grid->aset->editAttributes() ?>>
+<textarea data-table="fasilitasusaha" data-field="x_aset" name="x<?= $Grid->RowIndex ?>_aset" id="x<?= $Grid->RowIndex ?>_aset" cols="3" rows="4"<?= $Grid->aset->editAttributes() ?>><?= $Grid->aset->EditValue ?></textarea>
 <div class="invalid-feedback"><?= $Grid->aset->getErrorMessage() ?></div>
 </span>
 <?php } ?>
@@ -1067,13 +1067,13 @@ loadjs.ready("head", function() {
         <td data-name="aset">
 <?php if (!$Grid->isConfirm()) { ?>
 <span id="el$rowindex$_fasilitasusaha_aset" class="form-group fasilitasusaha_aset">
-<input type="<?= $Grid->aset->getInputTextType() ?>" data-table="fasilitasusaha" data-field="x_aset" name="x<?= $Grid->RowIndex ?>_aset" id="x<?= $Grid->RowIndex ?>_aset" size="30" maxlength="255" value="<?= $Grid->aset->EditValue ?>"<?= $Grid->aset->editAttributes() ?>>
+<textarea data-table="fasilitasusaha" data-field="x_aset" name="x<?= $Grid->RowIndex ?>_aset" id="x<?= $Grid->RowIndex ?>_aset" cols="3" rows="4"<?= $Grid->aset->editAttributes() ?>><?= $Grid->aset->EditValue ?></textarea>
 <div class="invalid-feedback"><?= $Grid->aset->getErrorMessage() ?></div>
 </span>
 <?php } else { ?>
 <span id="el$rowindex$_fasilitasusaha_aset" class="form-group fasilitasusaha_aset">
 <span<?= $Grid->aset->viewAttributes() ?>>
-<input type="text" readonly class="form-control-plaintext" value="<?= HtmlEncode(RemoveHtml($Grid->aset->getDisplayValue($Grid->aset->ViewValue))) ?>"></span>
+<?= $Grid->aset->ViewValue ?></span>
 </span>
 <input type="hidden" data-table="fasilitasusaha" data-field="x_aset" data-hidden="1" name="x<?= $Grid->RowIndex ?>_aset" id="x<?= $Grid->RowIndex ?>_aset" value="<?= HtmlEncode($Grid->aset->FormValue) ?>">
 <?php } ?>

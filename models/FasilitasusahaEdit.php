@@ -1175,9 +1175,6 @@ class FasilitasusahaEdit extends Fasilitasusaha
             // aset
             $this->aset->EditAttrs["class"] = "form-control";
             $this->aset->EditCustomAttributes = "";
-            if (!$this->aset->Raw) {
-                $this->aset->CurrentValue = HtmlDecode($this->aset->CurrentValue);
-            }
             $this->aset->EditValue = HtmlEncode($this->aset->CurrentValue);
 
             // modal

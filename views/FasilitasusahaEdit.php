@@ -235,7 +235,7 @@ loadjs.ready("head", function() {
         <label id="elh_fasilitasusaha_aset" for="x_aset" class="<?= $Page->LeftColumnClass ?>"><?= $Page->aset->caption() ?><?= $Page->aset->Required ? $Language->phrase("FieldRequiredIndicator") : "" ?></label>
         <div class="<?= $Page->RightColumnClass ?>"><div <?= $Page->aset->cellAttributes() ?>>
 <span id="el_fasilitasusaha_aset">
-<input type="<?= $Page->aset->getInputTextType() ?>" data-table="fasilitasusaha" data-field="x_aset" name="x_aset" id="x_aset" size="30" maxlength="255" value="<?= $Page->aset->EditValue ?>"<?= $Page->aset->editAttributes() ?> aria-describedby="x_aset_help">
+<textarea data-table="fasilitasusaha" data-field="x_aset" name="x_aset" id="x_aset" cols="3" rows="4"<?= $Page->aset->editAttributes() ?> aria-describedby="x_aset_help"><?= $Page->aset->EditValue ?></textarea>
 <?= $Page->aset->getCustomMessage() ?>
 <div class="invalid-feedback"><?= $Page->aset->getErrorMessage() ?></div>
 </span>
