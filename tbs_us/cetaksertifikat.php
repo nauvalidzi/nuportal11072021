@@ -21,7 +21,7 @@ while($row = mysqli_fetch_array($sqloa))
 
     $nama_pesantren = $row['nama'];
 
-    $alamat = $row['jalan']." , ".$row['desa'];
+    $alamat = $row['jalan']." ".$row['desa'];
 
     $kecamatan = $row['kecamatan'];
 
