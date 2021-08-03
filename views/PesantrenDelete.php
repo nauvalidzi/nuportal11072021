@@ -50,11 +50,11 @@ $Page->showMessage();
 <?php if ($Page->nama->Visible) { // nama ?>
         <th class="<?= $Page->nama->headerCellClass() ?>"><span id="elh_pesantren_nama" class="pesantren_nama"><?= $Page->nama->caption() ?></span></th>
 <?php } ?>
-<?php if ($Page->propinsi->Visible) { // propinsi ?>
-        <th class="<?= $Page->propinsi->headerCellClass() ?>"><span id="elh_pesantren_propinsi" class="pesantren_propinsi"><?= $Page->propinsi->caption() ?></span></th>
+<?php if ($Page->deskripsi->Visible) { // deskripsi ?>
+        <th class="<?= $Page->deskripsi->headerCellClass() ?>"><span id="elh_pesantren_deskripsi" class="pesantren_deskripsi"><?= $Page->deskripsi->caption() ?></span></th>
 <?php } ?>
-<?php if ($Page->kabupaten->Visible) { // kabupaten ?>
-        <th class="<?= $Page->kabupaten->headerCellClass() ?>"><span id="elh_pesantren_kabupaten" class="pesantren_kabupaten"><?= $Page->kabupaten->caption() ?></span></th>
+<?php if ($Page->jalan->Visible) { // jalan ?>
+        <th class="<?= $Page->jalan->headerCellClass() ?>"><span id="elh_pesantren_jalan" class="pesantren_jalan"><?= $Page->jalan->caption() ?></span></th>
 <?php } ?>
 <?php if ($Page->telpon->Visible) { // telpon ?>
         <th class="<?= $Page->telpon->headerCellClass() ?>"><span id="elh_pesantren_telpon" class="pesantren_telpon"><?= $Page->telpon->caption() ?></span></th>
@@ -123,19 +123,28 @@ while (!$Page->Recordset->EOF) {
 </span>
 </td>
 <?php } ?>
-<?php if ($Page->propinsi->Visible) { // propinsi ?>
-        <td <?= $Page->propinsi->cellAttributes() ?>>
-<span id="el<?= $Page->RowCount ?>_pesantren_propinsi" class="pesantren_propinsi">
-<span<?= $Page->propinsi->viewAttributes() ?>>
-<?= $Page->propinsi->getViewValue() ?></span>
+<?php if ($Page->deskripsi->Visible) { // deskripsi ?>
+        <td <?= $Page->deskripsi->cellAttributes() ?>>
+<span id="el<?= $Page->RowCount ?>_pesantren_deskripsi" class="pesantren_deskripsi">
+<span<?= $Page->deskripsi->viewAttributes() ?>>
+<?= $Page->deskripsi->getViewValue() ?></span>
 </span>
 </td>
 <?php } ?>
-<?php if ($Page->kabupaten->Visible) { // kabupaten ?>
-        <td <?= $Page->kabupaten->cellAttributes() ?>>
-<span id="el<?= $Page->RowCount ?>_pesantren_kabupaten" class="pesantren_kabupaten">
-<span<?= $Page->kabupaten->viewAttributes() ?>>
-<?= $Page->kabupaten->getViewValue() ?></span>
+<?php if ($Page->jalan->Visible) { // jalan ?>
+        <td <?= $Page->jalan->cellAttributes() ?>>
+<span id="el<?= $Page->RowCount ?>_pesantren_jalan" class="pesantren_jalan">
+<span<?= $Page->jalan->viewAttributes() ?>>
+<?= $Page->jalan->getViewValue() ?>
+<script>
+loadjs.ready("head", function() {
+    ew.googleMaps.push(jQuery.extend({"id":"gm_pesantren_x_jalan","name":"Google Maps","width":200,"width_field":null,"height":200,"height_field":null,"latitude":null,"latitude_field":"latitude","longitude":null,"longitude_field":"longitude","address":null,"address_field":null,"type":"ROADMAP","type_field":null,"zoom":8,"zoom_field":null,"title":null,"title_field":null,"icon":null,"icon_field":null,"description":null,"description_field":null,"use_single_map":true,"single_map_width":400,"single_map_height":400,"show_map_on_top":true,"show_all_markers":true,"geocoding_delay":250,"use_marker_clusterer":true,"cluster_max_zoom":-1,"cluster_grid_size":-1,"cluster_styles":-1,"template_id":"orig<?= $Page->RowCount ?>_pesantren_jalan"}, {
+        latitude: <?= JsonEncode($Page->latitude->CurrentValue, "number") ?>,
+        longitude: <?= JsonEncode($Page->longitude->CurrentValue, "number") ?>,
+    }));
+});
+</script>
+</span>
 </span>
 </td>
 <?php } ?>

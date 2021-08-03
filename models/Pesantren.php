@@ -3116,6 +3116,7 @@ SORTHTML;
     {
         // Enter your code here
         // To cancel, set return value to false
+        // Get lat and long by address
         return true;
     }
 
@@ -3123,7 +3124,26 @@ SORTHTML;
     public function rowInserted($rsold, &$rsnew)
     {
         //Log("Row Inserted");
-        $myResult = ExecuteUpdate("UPDATE pesantren SET created_at='".date('Y-m-d H:i:s')."', updated_at='".date('Y-m-d H:i:s')."' WHERE id=".$rsnew['id']."");
+        $jalan = $rsnew['jalan'] ?? NULL;
+        $id_kabupaten = $rsnew['kabupaten'] ?? NULL;
+        $id_provinsi = $rsnew['propinsi'] ?? NULL;
+        $id_kecamatan = $rsnew['kecamatan'] ?? NULL;
+        $id_desa = $rsnew['desa'] ?? NULL;
+        $kode_pos = $rsnew['kodepos'] ?? NULL;
+        $desa = ExecuteRow("SELECT name FROM kelurahans WHERE id = $id_desa")[0];
+        $kecamatan = ExecuteRow("SELECT name FROM kecamatans WHERE id = $id_kecamatan")[0];
+        $kabupaten = ExecuteRow("SELECT name FROM kabupatens WHERE id = $id_kabupaten")[0];    
+        $provinsi = ExecuteRow("SELECT name FROM provinsis WHERE id = $id_provinsi")[0];
+        $address = $jalan.','.$desa.','.$kecamatan.','.$kabupaten.','.$provinsi.' '.$kode_pos.', Indonesia';
+        $prepAddr = str_replace(' ','+',$address);
+        $geocode = file_get_contents('https://maps.google.com/maps/api/geocode/json?address='.$prepAddr.'&sensor=false&key=AIzaSyD93B_SN3Phn9avToCSCDEQ81CrvJZIV6A');
+        $output = json_decode($geocode);
+        $latitude = $output->results[0]->geometry->location->lat;
+        $longitude = $output->results[0]->geometry->location->lng;
+
+        //$rsnew['latitude'] = $latitude;
+        //$rsnew['longitude'] = $longitude;
+        $myResult = ExecuteUpdate("UPDATE pesantren SET longitude = '$longitude', latitude = '$latitude', created_at='".date('Y-m-d H:i:s')."', updated_at='".date('Y-m-d H:i:s')."' WHERE id=".$rsnew['id']."");
         return true;
     }
 
@@ -3168,7 +3188,24 @@ SORTHTML;
                 //$rsnew['validator_pusat']=CurrentUserID();
             }
         }
-        $myResult = ExecuteUpdate("UPDATE pesantren SET updated_at='".date('Y-m-d H:i:s')."' WHERE id=".$rsold['id']);
+        $jalan = $rsnew['jalan'] ?? NULL;
+        $id_kabupaten = $rsnew['kabupaten'] ?? NULL;
+        $id_provinsi = $rsnew['propinsi'] ?? NULL;
+        $id_kecamatan = $rsnew['kecamatan'] ?? NULL;
+        $id_desa = $rsnew['desa'] ?? NULL;
+        $kode_pos = $rsnew['kodepos'] ?? NULL;
+        $desa = ExecuteRow("SELECT name FROM kelurahans WHERE id = $id_desa")[0];
+        $kecamatan = ExecuteRow("SELECT name FROM kecamatans WHERE id = $id_kecamatan")[0];
+        $kabupaten = ExecuteRow("SELECT name FROM kabupatens WHERE id = $id_kabupaten")[0];    
+        $provinsi = ExecuteRow("SELECT name FROM provinsis WHERE id = $id_provinsi")[0];
+        $address = $jalan.','.$desa.','.$kecamatan.','.$kabupaten.','.$provinsi.' '.$kode_pos.', Indonesia';
+        $prepAddr = str_replace(' ','+',$address);
+        $geocode = file_get_contents('https://maps.google.com/maps/api/geocode/json?address='.$prepAddr.'&sensor=false&key=AIzaSyD93B_SN3Phn9avToCSCDEQ81CrvJZIV6A');
+        $output = json_decode($geocode);
+        $latitude = $output->results[0]->geometry->location->lat;
+        $longitude = $output->results[0]->geometry->location->lng;
+        //echo json_encode([$latitude, $longitude, $address]);
+        $myResult = ExecuteUpdate("UPDATE pesantren SET longitude = '$longitude', latitude = '$latitude', updated_at='".date('Y-m-d H:i:s')."' WHERE id=".$rsold['id']);
        // $rsnew['updated_at']=date("Y-m-d H:i:s");
     }
 

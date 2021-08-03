@@ -31,24 +31,33 @@ $pesantren = Container("pesantren");
 </td>
         </tr>
 <?php } ?>
-<?php if ($pesantren->propinsi->Visible) { // propinsi ?>
-        <tr id="r_propinsi">
-            <td class="<?= $pesantren->TableLeftColumnClass ?>"><?= $pesantren->propinsi->caption() ?></td>
-            <td <?= $pesantren->propinsi->cellAttributes() ?>>
-<span id="el_pesantren_propinsi">
-<span<?= $pesantren->propinsi->viewAttributes() ?>>
-<?= $pesantren->propinsi->getViewValue() ?></span>
+<?php if ($pesantren->deskripsi->Visible) { // deskripsi ?>
+        <tr id="r_deskripsi">
+            <td class="<?= $pesantren->TableLeftColumnClass ?>"><?= $pesantren->deskripsi->caption() ?></td>
+            <td <?= $pesantren->deskripsi->cellAttributes() ?>>
+<span id="el_pesantren_deskripsi">
+<span<?= $pesantren->deskripsi->viewAttributes() ?>>
+<?= $pesantren->deskripsi->getViewValue() ?></span>
 </span>
 </td>
         </tr>
 <?php } ?>
-<?php if ($pesantren->kabupaten->Visible) { // kabupaten ?>
-        <tr id="r_kabupaten">
-            <td class="<?= $pesantren->TableLeftColumnClass ?>"><?= $pesantren->kabupaten->caption() ?></td>
-            <td <?= $pesantren->kabupaten->cellAttributes() ?>>
-<span id="el_pesantren_kabupaten">
-<span<?= $pesantren->kabupaten->viewAttributes() ?>>
-<?= $pesantren->kabupaten->getViewValue() ?></span>
+<?php if ($pesantren->jalan->Visible) { // jalan ?>
+        <tr id="r_jalan">
+            <td class="<?= $pesantren->TableLeftColumnClass ?>"><?= $pesantren->jalan->caption() ?></td>
+            <td <?= $pesantren->jalan->cellAttributes() ?>>
+<span id="el_pesantren_jalan">
+<span<?= $pesantren->jalan->viewAttributes() ?>><div id="gm_pesantren_x_jalan" class="ew-google-map" style="width: 200px; height: 200px;"></div>
+<?= $pesantren->jalan->getViewValue() ?>
+<script>
+loadjs.ready("head", function() {
+    ew.googleMaps.push(jQuery.extend({"id":"gm_pesantren_x_jalan","name":"Google Maps","width":200,"width_field":null,"height":200,"height_field":null,"latitude":null,"latitude_field":"latitude","longitude":null,"longitude_field":"longitude","address":null,"address_field":null,"type":"ROADMAP","type_field":null,"zoom":8,"zoom_field":null,"title":null,"title_field":null,"icon":null,"icon_field":null,"description":null,"description_field":null,"use_single_map":false,"single_map_width":400,"single_map_height":400,"show_map_on_top":true,"show_all_markers":true,"geocoding_delay":250,"use_marker_clusterer":false,"cluster_max_zoom":-1,"cluster_grid_size":-1,"cluster_styles":-1,"template_id":"orig_pesantren_jalan"}, {
+        latitude: <?= JsonEncode($pesantren->latitude->CurrentValue, "number") ?>,
+        longitude: <?= JsonEncode($pesantren->longitude->CurrentValue, "number") ?>,
+    }));
+});
+</script>
+</span>
 </span>
 </td>
         </tr>

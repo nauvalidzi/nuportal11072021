@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<ew-language date="2021/7/22" version="17.0.5" id="en" name="English" desc="English" author="e.World Technology Limited">
+<ew-language date="2021/8/3" version="17.0.5" id="en" name="English" desc="English" author="e.World Technology Limited">
   <!--
     *** Important Notes:
     1. Language ID should follow: https://developers.google.com/recaptcha/docs/language,
@@ -923,6 +923,7 @@
     <phrase id="501desc" value="The server does not support the functionality required to fulfill the request." />
   </global>
   <project>
+    <phrase id="bodytitle" value="NUPORTAL" />
     <phrase id="footertext" value="&amp;copy;2021 NU. All rights reserved." />
     <menu id="53">
       <phrase id="menutext" value="kodepos" />

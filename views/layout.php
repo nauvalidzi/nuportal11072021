@@ -169,6 +169,13 @@ loadjs.ready("datetimepicker", function() {
     });
 });
 </script>
+<script>
+ew.ready("head", [
+    "https://maps.googleapis.com/maps/api/js?key=AIzaSyD93B_SN3Phn9avToCSCDEQ81CrvJZIV6A",
+    ew.PATH_BASE + "js/markerclusterer.js",
+    ew.PATH_BASE + "js/ewgooglemaps.js"
+], "googlemaps");
+</script>
 <!-- Navbar -->
 <script type="text/html" id="navbar-menu-items" class="ew-js-template" data-name="navbar" data-seq="10" data-data="navbar" data-method="appendTo" data-target="#ew-navbar">
 {{if items}}

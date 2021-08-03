@@ -17,7 +17,7 @@ return [
         "SERVER_PASSWORD" => "NUadmin2021", // SMTP server password
     ],
     "JWT" => [
-        "SECRET_KEY" => "zDDtyjYpYJ5E1in7", // API Secret Key
+        "SECRET_KEY" => "Nq2src67y8N7yqwE", // API Secret Key
         "ALGORITHM" => "HS512", // API Algorithm
         "AUTH_HEADER" => "X-Authorization", // API Auth Header (Note: The "Authorization" header is removed by IIS, use "X-Authorization" instead.)
         "NOT_BEFORE_TIME" => 0, // API access time before login

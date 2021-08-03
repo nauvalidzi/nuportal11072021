@@ -571,10 +571,10 @@ class PesantrenList extends Pesantren
         $this->id->Visible = false;
         $this->kode->setVisibility();
         $this->nama->setVisibility();
-        $this->deskripsi->Visible = false;
-        $this->jalan->Visible = false;
-        $this->propinsi->setVisibility();
-        $this->kabupaten->setVisibility();
+        $this->deskripsi->setVisibility();
+        $this->jalan->setVisibility();
+        $this->propinsi->Visible = false;
+        $this->kabupaten->Visible = false;
         $this->kecamatan->Visible = false;
         $this->desa->Visible = false;
         $this->kodepos->Visible = false;
@@ -857,8 +857,8 @@ class PesantrenList extends Pesantren
             $this->CurrentOrderType = Get("ordertype", "");
             $this->updateSort($this->kode); // kode
             $this->updateSort($this->nama); // nama
-            $this->updateSort($this->propinsi); // propinsi
-            $this->updateSort($this->kabupaten); // kabupaten
+            $this->updateSort($this->deskripsi); // deskripsi
+            $this->updateSort($this->jalan); // jalan
             $this->updateSort($this->telpon); // telpon
             $this->updateSort($this->nspp); // nspp
             $this->updateSort($this->nspptglmulai); // nspptglmulai
@@ -2265,6 +2265,10 @@ class PesantrenList extends Pesantren
             $this->nama->ViewValue = $this->nama->CurrentValue;
             $this->nama->ViewCustomAttributes = "";
 
+            // deskripsi
+            $this->deskripsi->ViewValue = $this->deskripsi->CurrentValue;
+            $this->deskripsi->ViewCustomAttributes = "";
+
             // jalan
             $this->jalan->ViewValue = $this->jalan->CurrentValue;
             $this->jalan->ViewCustomAttributes = "";
@@ -2577,15 +2581,15 @@ class PesantrenList extends Pesantren
             $this->nama->HrefValue = "";
             $this->nama->TooltipValue = "";
 
-            // propinsi
-            $this->propinsi->LinkCustomAttributes = "";
-            $this->propinsi->HrefValue = "";
-            $this->propinsi->TooltipValue = "";
+            // deskripsi
+            $this->deskripsi->LinkCustomAttributes = "";
+            $this->deskripsi->HrefValue = "";
+            $this->deskripsi->TooltipValue = "";
 
-            // kabupaten
-            $this->kabupaten->LinkCustomAttributes = "";
-            $this->kabupaten->HrefValue = "";
-            $this->kabupaten->TooltipValue = "";
+            // jalan
+            $this->jalan->LinkCustomAttributes = "";
+            $this->jalan->HrefValue = "";
+            $this->jalan->TooltipValue = "";
 
             // telpon
             $this->telpon->LinkCustomAttributes = "";

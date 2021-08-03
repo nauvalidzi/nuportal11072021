@@ -83,8 +83,17 @@ $Page->showMessage();
         <td class="<?= $Page->TableLeftColumnClass ?>"><span id="elh_pesantren_jalan"><?= $Page->jalan->caption() ?></span></td>
         <td data-name="jalan" <?= $Page->jalan->cellAttributes() ?>>
 <span id="el_pesantren_jalan">
-<span<?= $Page->jalan->viewAttributes() ?>>
-<?= $Page->jalan->getViewValue() ?></span>
+<span<?= $Page->jalan->viewAttributes() ?>><div id="gm_pesantren_x_jalan" class="ew-google-map" style="width: 200px; height: 200px;"></div>
+<?= $Page->jalan->getViewValue() ?>
+<script>
+loadjs.ready("head", function() {
+    ew.googleMaps.push(jQuery.extend({"id":"gm_pesantren_x_jalan","name":"Google Maps","width":200,"width_field":null,"height":200,"height_field":null,"latitude":null,"latitude_field":"latitude","longitude":null,"longitude_field":"longitude","address":null,"address_field":null,"type":"ROADMAP","type_field":null,"zoom":8,"zoom_field":null,"title":null,"title_field":null,"icon":null,"icon_field":null,"description":null,"description_field":null,"use_single_map":false,"single_map_width":400,"single_map_height":400,"show_map_on_top":true,"show_all_markers":true,"geocoding_delay":250,"use_marker_clusterer":false,"cluster_max_zoom":-1,"cluster_grid_size":-1,"cluster_styles":-1,"template_id":"orig_pesantren_jalan"}, {
+        latitude: <?= JsonEncode($Page->latitude->CurrentValue, "number") ?>,
+        longitude: <?= JsonEncode($Page->longitude->CurrentValue, "number") ?>,
+    }));
+});
+</script>
+</span>
 </span>
 </td>
     </tr>
