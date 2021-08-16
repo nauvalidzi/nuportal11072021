@@ -20,9 +20,8 @@ loadjs.ready("head", function () {
     if (!ew.vars.tables.kodepos)
         ew.vars.tables.kodepos = currentTable;
     fkodeposadd.addFields([
-        ["id", [fields.id.visible && fields.id.required ? ew.Validators.required(fields.id.caption) : null, ew.Validators.integer], fields.id.isInvalid],
-        ["kelurahan_id", [fields.kelurahan_id.visible && fields.kelurahan_id.required ? ew.Validators.required(fields.kelurahan_id.caption) : null, ew.Validators.integer], fields.kelurahan_id.isInvalid],
-        ["kodepos", [fields.kodepos.visible && fields.kodepos.required ? ew.Validators.required(fields.kodepos.caption) : null], fields.kodepos.isInvalid]
+        ["kodepos", [fields.kodepos.visible && fields.kodepos.required ? ew.Validators.required(fields.kodepos.caption) : null, ew.Validators.integer], fields.kodepos.isInvalid],
+        ["kecamatan_id", [fields.kecamatan_id.visible && fields.kecamatan_id.required ? ew.Validators.required(fields.kecamatan_id.caption) : null, ew.Validators.integer], fields.kecamatan_id.isInvalid]
     ]);
 
     // Set invalid fields
@@ -111,30 +110,6 @@ $Page->showMessage();
 <input type="hidden" name="modal" value="<?= (int)$Page->IsModal ?>">
 <input type="hidden" name="<?= $Page->OldKeyName ?>" value="<?= $Page->OldKey ?>">
 <div class="ew-add-div"><!-- page* -->
-<?php if ($Page->id->Visible) { // id ?>
-    <div id="r_id" class="form-group row">
-        <label id="elh_kodepos_id" for="x_id" class="<?= $Page->LeftColumnClass ?>"><?= $Page->id->caption() ?><?= $Page->id->Required ? $Language->phrase("FieldRequiredIndicator") : "" ?></label>
-        <div class="<?= $Page->RightColumnClass ?>"><div <?= $Page->id->cellAttributes() ?>>
-<span id="el_kodepos_id">
-<input type="<?= $Page->id->getInputTextType() ?>" data-table="kodepos" data-field="x_id" name="x_id" id="x_id" value="<?= $Page->id->EditValue ?>"<?= $Page->id->editAttributes() ?> aria-describedby="x_id_help">
-<?= $Page->id->getCustomMessage() ?>
-<div class="invalid-feedback"><?= $Page->id->getErrorMessage() ?></div>
-</span>
-</div></div>
-    </div>
-<?php } ?>
-<?php if ($Page->kelurahan_id->Visible) { // kelurahan_id ?>
-    <div id="r_kelurahan_id" class="form-group row">
-        <label id="elh_kodepos_kelurahan_id" for="x_kelurahan_id" class="<?= $Page->LeftColumnClass ?>"><?= $Page->kelurahan_id->caption() ?><?= $Page->kelurahan_id->Required ? $Language->phrase("FieldRequiredIndicator") : "" ?></label>
-        <div class="<?= $Page->RightColumnClass ?>"><div <?= $Page->kelurahan_id->cellAttributes() ?>>
-<span id="el_kodepos_kelurahan_id">
-<input type="<?= $Page->kelurahan_id->getInputTextType() ?>" data-table="kodepos" data-field="x_kelurahan_id" name="x_kelurahan_id" id="x_kelurahan_id" size="30" value="<?= $Page->kelurahan_id->EditValue ?>"<?= $Page->kelurahan_id->editAttributes() ?> aria-describedby="x_kelurahan_id_help">
-<?= $Page->kelurahan_id->getCustomMessage() ?>
-<div class="invalid-feedback"><?= $Page->kelurahan_id->getErrorMessage() ?></div>
-</span>
-</div></div>
-    </div>
-<?php } ?>
 <?php if ($Page->kodepos->Visible) { // kodepos ?>
     <div id="r_kodepos" class="form-group row">
         <label id="elh_kodepos_kodepos" for="x_kodepos" class="<?= $Page->LeftColumnClass ?>"><?= $Page->kodepos->caption() ?><?= $Page->kodepos->Required ? $Language->phrase("FieldRequiredIndicator") : "" ?></label>
@@ -143,6 +118,18 @@ $Page->showMessage();
 <input type="<?= $Page->kodepos->getInputTextType() ?>" data-table="kodepos" data-field="x_kodepos" name="x_kodepos" id="x_kodepos" size="30" maxlength="10" value="<?= $Page->kodepos->EditValue ?>"<?= $Page->kodepos->editAttributes() ?> aria-describedby="x_kodepos_help">
 <?= $Page->kodepos->getCustomMessage() ?>
 <div class="invalid-feedback"><?= $Page->kodepos->getErrorMessage() ?></div>
+</span>
+</div></div>
+    </div>
+<?php } ?>
+<?php if ($Page->kecamatan_id->Visible) { // kecamatan_id ?>
+    <div id="r_kecamatan_id" class="form-group row">
+        <label id="elh_kodepos_kecamatan_id" for="x_kecamatan_id" class="<?= $Page->LeftColumnClass ?>"><?= $Page->kecamatan_id->caption() ?><?= $Page->kecamatan_id->Required ? $Language->phrase("FieldRequiredIndicator") : "" ?></label>
+        <div class="<?= $Page->RightColumnClass ?>"><div <?= $Page->kecamatan_id->cellAttributes() ?>>
+<span id="el_kodepos_kecamatan_id">
+<input type="<?= $Page->kecamatan_id->getInputTextType() ?>" data-table="kodepos" data-field="x_kecamatan_id" name="x_kecamatan_id" id="x_kecamatan_id" size="30" value="<?= $Page->kecamatan_id->EditValue ?>"<?= $Page->kecamatan_id->editAttributes() ?> aria-describedby="x_kecamatan_id_help">
+<?= $Page->kecamatan_id->getCustomMessage() ?>
+<div class="invalid-feedback"><?= $Page->kecamatan_id->getErrorMessage() ?></div>
 </span>
 </div></div>
     </div>

@@ -1383,7 +1383,7 @@ class PesantrenAdd extends Pesantren
             if ($curVal != "") {
                 $this->kodepos->ViewValue = $this->kodepos->lookupCacheOption($curVal);
                 if ($this->kodepos->ViewValue === null) { // Lookup from database
-                    $filterWrk = "`kodepos`" . SearchString("=", $curVal, DATATYPE_STRING, "");
+                    $filterWrk = "`kodepos`" . SearchString("=", $curVal, DATATYPE_NUMBER, "");
                     $sqlWrk = $this->kodepos->Lookup->getSql(false, $filterWrk, '', $this, true, true);
                     $rswrk = Conn()->executeQuery($sqlWrk)->fetchAll(\PDO::FETCH_BOTH);
                     $ari = count($rswrk);
@@ -1906,7 +1906,7 @@ class PesantrenAdd extends Pesantren
                 if ($curVal == "") {
                     $filterWrk = "0=1";
                 } else {
-                    $filterWrk = "`kodepos`" . SearchString("=", $this->kodepos->CurrentValue, DATATYPE_STRING, "");
+                    $filterWrk = "`kodepos`" . SearchString("=", $this->kodepos->CurrentValue, DATATYPE_NUMBER, "");
                 }
                 $sqlWrk = $this->kodepos->Lookup->getSql(true, $filterWrk, '', $this, false, true);
                 $rswrk = Conn()->executeQuery($sqlWrk)->fetchAll(\PDO::FETCH_BOTH);

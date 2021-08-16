@@ -284,7 +284,6 @@ loadjs.ready("head", function() {
         <label id="elh_pesantren_desa" for="x_desa" class="<?= $Page->LeftColumnClass ?>"><?= $Page->desa->caption() ?><?= $Page->desa->Required ? $Language->phrase("FieldRequiredIndicator") : "" ?></label>
         <div class="<?= $Page->RightColumnClass ?>"><div <?= $Page->desa->cellAttributes() ?>>
 <span id="el_pesantren_desa">
-<?php $Page->desa->EditAttrs->prepend("onchange", "ew.updateOptions.call(this);"); ?>
     <select
         id="x_desa"
         name="x_desa"

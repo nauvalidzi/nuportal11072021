@@ -19,22 +19,4 @@ class KodeposController extends ControllerBase
     {
         return $this->runPage($request, $response, $args, "KodeposAdd");
     }
-
-    // view
-    public function view(Request $request, Response $response, array $args): Response
-    {
-        return $this->runPage($request, $response, $args, "KodeposView");
-    }
-
-    // edit
-    public function edit(Request $request, Response $response, array $args): Response
-    {
-        return $this->runPage($request, $response, $args, "KodeposEdit");
-    }
-
-    // delete
-    public function delete(Request $request, Response $response, array $args): Response
-    {
-        return $this->runPage($request, $response, $args, "KodeposDelete");
-    }
 }

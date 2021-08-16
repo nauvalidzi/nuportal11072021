@@ -7,12 +7,12 @@ use Doctrine\DBAL\ParameterType;
 /**
  * Page class
  */
-class KodeposAdd extends Kodepos
+class KodeposAddopt extends Kodepos
 {
     use MessagesTrait;
 
     // Page ID
-    public $PageID = "add";
+    public $PageID = "addopt";
 
     // Project ID
     public $ProjectID = PROJECT_ID;
@@ -21,7 +21,7 @@ class KodeposAdd extends Kodepos
     public $TableName = 'kodepos';
 
     // Page object name
-    public $PageObjName = "KodeposAdd";
+    public $PageObjName = "KodeposAddopt";
 
     // Rendering View
     public $RenderingView = false;
@@ -259,25 +259,8 @@ class KodeposAdd extends Kodepos
             if (!Config("DEBUG") && ob_get_length()) {
                 ob_end_clean();
             }
-
-            // Handle modal response
-            if ($this->IsModal) { // Show as modal
-                $row = ["url" => GetUrl($url), "modal" => "1"];
-                $pageName = GetPageName($url);
-                if ($pageName != $this->getListUrl()) { // Not List page
-                    $row["caption"] = $this->getModalCaption($pageName);
-                    if ($pageName == "KodeposView") {
-                        $row["view"] = "1";
-                    }
-                } else { // List page should not be shown as modal => error
-                    $row["error"] = $this->getFailureMessage();
-                    $this->clearFailureMessage();
-                }
-                WriteJson($row);
-            } else {
-                SaveDebugMessage();
-                Redirect(GetUrl($url));
-            }
+            SaveDebugMessage();
+            Redirect(GetUrl($url));
         }
         return; // Return to controller
     }
@@ -434,15 +417,7 @@ class KodeposAdd extends Kodepos
         }
         $lookup->toJson($this); // Use settings from current page
     }
-    public $FormClassName = "ew-horizontal ew-form ew-add-form";
     public $IsModal = false;
-    public $IsMobileOrModal = false;
-    public $DbMasterFilter = "";
-    public $DbDetailFilter = "";
-    public $StartRecord;
-    public $Priv = 0;
-    public $OldRecordset;
-    public $CopyRecord;
 
     /**
      * Page run
@@ -451,17 +426,13 @@ class KodeposAdd extends Kodepos
      */
     public function run()
     {
-        global $ExportType, $CustomExportType, $ExportFileName, $UserProfile, $Language, $Security, $CurrentForm,
-            $SkipHeaderFooter;
-
-        // Is modal
-        $this->IsModal = Param("modal") == "1";
+        global $ExportType, $CustomExportType, $ExportFileName, $UserProfile, $Language, $Security, $CurrentForm;
 
         // Create form object
         $CurrentForm = new HttpForm();
         $this->CurrentAction = Param("action"); // Set up current action
         $this->kodepos->setVisibility();
-        $this->kecamatan_id->setVisibility();
+        $this->kecamatan_id->Visible = false;
         $this->hideFieldsForAddEdit();
 
         // Do not use lookup cache
@@ -477,99 +448,12 @@ class KodeposAdd extends Kodepos
 
         // Set up lookup cache
 
-        // Check modal
-        if ($this->IsModal) {
-            $SkipHeaderFooter = true;
-        }
-        $this->IsMobileOrModal = IsMobile() || $this->IsModal;
-        $this->FormClassName = "ew-form ew-add-form ew-horizontal";
-        $postBack = false;
-
-        // Set up current action
-        if (IsApi()) {
-            $this->CurrentAction = "insert"; // Add record directly
-            $postBack = true;
-        } elseif (Post("action") !== null) {
-            $this->CurrentAction = Post("action"); // Get form action
-            $this->setKey(Post($this->OldKeyName));
-            $postBack = true;
-        } else { // Not post back
-            $this->CopyRecord = false;
-            if ($this->CopyRecord) {
-                $this->CurrentAction = "copy"; // Copy record
-            } else {
-                $this->CurrentAction = "show"; // Display blank record
-            }
-        }
-
-        // Load old record / default values
-        $loaded = $this->loadOldRecord();
-
-        // Load form values
-        if ($postBack) {
-            $this->loadFormValues(); // Load form values
-        }
-
-        // Validate form if post back
-        if ($postBack) {
-            if (!$this->validateForm()) {
-                $this->EventCancelled = true; // Event cancelled
-                $this->restoreFormValues(); // Restore form values
-                if (IsApi()) {
-                    $this->terminate();
-                    return;
-                } else {
-                    $this->CurrentAction = "show"; // Form error, reset action
-                }
-            }
-        }
-
-        // Perform current action
-        switch ($this->CurrentAction) {
-            case "copy": // Copy an existing record
-                if (!$loaded) { // Record not loaded
-                    if ($this->getFailureMessage() == "") {
-                        $this->setFailureMessage($Language->phrase("NoRecord")); // No record found
-                    }
-                    $this->terminate("KodeposList"); // No matching record, return to list
-                    return;
-                }
-                break;
-            case "insert": // Add new record
-                $this->SendEmail = true; // Send email on add success
-                if ($this->addRow($this->OldRecordset)) { // Add successful
-                    if ($this->getSuccessMessage() == "" && Post("addopt") != "1") { // Skip success message for addopt (done in JavaScript)
-                        $this->setSuccessMessage($Language->phrase("AddSuccess")); // Set up success message
-                    }
-                    $returnUrl = $this->getReturnUrl();
-                    if (GetPageName($returnUrl) == "KodeposList") {
-                        $returnUrl = $this->addMasterUrl($returnUrl); // List page, return to List page with correct master key if necessary
-                    } elseif (GetPageName($returnUrl) == "KodeposView") {
-                        $returnUrl = $this->getViewUrl(); // View page, return to View page with keyurl directly
-                    }
-                    if (IsApi()) { // Return to caller
-                        $this->terminate(true);
-                        return;
-                    } else {
-                        $this->terminate($returnUrl);
-                        return;
-                    }
-                } elseif (IsApi()) { // API request, return
-                    $this->terminate();
-                    return;
-                } else {
-                    $this->EventCancelled = true; // Event cancelled
-                    $this->restoreFormValues(); // Add failed, restore form values
-                }
-        }
-
         // Set up Breadcrumb
-        $this->setupBreadcrumb();
-
-        // Render row based on row type
-        $this->RowType = ROWTYPE_ADD; // Render add type
+        //$this->setupBreadcrumb(); // Not used
+        $this->loadRowValues(); // Load default values
 
         // Render row
+        $this->RowType = ROWTYPE_ADD; // Render add type
         $this->resetAttributes();
         $this->renderRow();
 
@@ -617,21 +501,7 @@ class KodeposAdd extends Kodepos
         // Check field name 'kodepos' first before field var 'x_kodepos'
         $val = $CurrentForm->hasValue("kodepos") ? $CurrentForm->getValue("kodepos") : $CurrentForm->getValue("x_kodepos");
         if (!$this->kodepos->IsDetailKey) {
-            if (IsApi() && $val === null) {
-                $this->kodepos->Visible = false; // Disable update for API request
-            } else {
-                $this->kodepos->setFormValue($val);
-            }
-        }
-
-        // Check field name 'kecamatan_id' first before field var 'x_kecamatan_id'
-        $val = $CurrentForm->hasValue("kecamatan_id") ? $CurrentForm->getValue("kecamatan_id") : $CurrentForm->getValue("x_kecamatan_id");
-        if (!$this->kecamatan_id->IsDetailKey) {
-            if (IsApi() && $val === null) {
-                $this->kecamatan_id->Visible = false; // Disable update for API request
-            } else {
-                $this->kecamatan_id->setFormValue($val);
-            }
+            $this->kodepos->setFormValue(ConvertFromUtf8($val));
         }
     }
 
@@ -639,8 +509,7 @@ class KodeposAdd extends Kodepos
     public function restoreFormValues()
     {
         global $CurrentForm;
-        $this->kodepos->CurrentValue = $this->kodepos->FormValue;
-        $this->kecamatan_id->CurrentValue = $this->kecamatan_id->FormValue;
+        $this->kodepos->CurrentValue = ConvertToUtf8($this->kodepos->FormValue);
     }
 
     /**
@@ -704,12 +573,6 @@ class KodeposAdd extends Kodepos
         return $row;
     }
 
-    // Load old record
-    protected function loadOldRecord()
-    {
-        return false;
-    }
-
     // Render row values based on field settings
     public function renderRow()
     {
@@ -739,31 +602,17 @@ class KodeposAdd extends Kodepos
             $this->kodepos->LinkCustomAttributes = "";
             $this->kodepos->HrefValue = "";
             $this->kodepos->TooltipValue = "";
-
-            // kecamatan_id
-            $this->kecamatan_id->LinkCustomAttributes = "";
-            $this->kecamatan_id->HrefValue = "";
-            $this->kecamatan_id->TooltipValue = "";
         } elseif ($this->RowType == ROWTYPE_ADD) {
             // kodepos
             $this->kodepos->EditAttrs["class"] = "form-control";
             $this->kodepos->EditCustomAttributes = "";
             $this->kodepos->EditValue = HtmlEncode($this->kodepos->CurrentValue);
 
-            // kecamatan_id
-            $this->kecamatan_id->EditAttrs["class"] = "form-control";
-            $this->kecamatan_id->EditCustomAttributes = "";
-            $this->kecamatan_id->EditValue = HtmlEncode($this->kecamatan_id->CurrentValue);
-
             // Add refer script
 
             // kodepos
             $this->kodepos->LinkCustomAttributes = "";
             $this->kodepos->HrefValue = "";
-
-            // kecamatan_id
-            $this->kecamatan_id->LinkCustomAttributes = "";
-            $this->kecamatan_id->HrefValue = "";
         }
         if ($this->RowType == ROWTYPE_ADD || $this->RowType == ROWTYPE_EDIT || $this->RowType == ROWTYPE_SEARCH) { // Add/Edit/Search row
             $this->setupFieldTitles();
@@ -792,14 +641,6 @@ class KodeposAdd extends Kodepos
         if (!CheckInteger($this->kodepos->FormValue)) {
             $this->kodepos->addErrorMessage($this->kodepos->getErrorMessage(false));
         }
-        if ($this->kecamatan_id->Required) {
-            if (!$this->kecamatan_id->IsDetailKey && EmptyValue($this->kecamatan_id->FormValue)) {
-                $this->kecamatan_id->addErrorMessage(str_replace("%s", $this->kecamatan_id->caption(), $this->kecamatan_id->RequiredErrorMessage));
-            }
-        }
-        if (!CheckInteger($this->kecamatan_id->FormValue)) {
-            $this->kecamatan_id->addErrorMessage($this->kecamatan_id->getErrorMessage(false));
-        }
 
         // Return validate result
         $validateForm = !$this->hasInvalidFields();
@@ -813,63 +654,6 @@ class KodeposAdd extends Kodepos
         return $validateForm;
     }
 
-    // Add record
-    protected function addRow($rsold = null)
-    {
-        global $Language, $Security;
-        $conn = $this->getConnection();
-
-        // Load db values from rsold
-        $this->loadDbValues($rsold);
-        if ($rsold) {
-        }
-        $rsnew = [];
-
-        // kodepos
-        $this->kodepos->setDbValueDef($rsnew, $this->kodepos->CurrentValue, 0, strval($this->kodepos->CurrentValue) == "");
-
-        // kecamatan_id
-        $this->kecamatan_id->setDbValueDef($rsnew, $this->kecamatan_id->CurrentValue, 0, false);
-
-        // Call Row Inserting event
-        $insertRow = $this->rowInserting($rsold, $rsnew);
-        $addRow = false;
-        if ($insertRow) {
-            try {
-                $addRow = $this->insert($rsnew);
-            } catch (\Exception $e) {
-                $this->setFailureMessage($e->getMessage());
-            }
-            if ($addRow) {
-            }
-        } else {
-            if ($this->getSuccessMessage() != "" || $this->getFailureMessage() != "") {
-                // Use the message, do nothing
-            } elseif ($this->CancelMessage != "") {
-                $this->setFailureMessage($this->CancelMessage);
-                $this->CancelMessage = "";
-            } else {
-                $this->setFailureMessage($Language->phrase("InsertCancelled"));
-            }
-            $addRow = false;
-        }
-        if ($addRow) {
-            // Call Row Inserted event
-            $this->rowInserted($rsold, $rsnew);
-        }
-
-        // Clean upload path if any
-        if ($addRow) {
-        }
-
-        // Write JSON for API request
-        if (IsApi() && $addRow) {
-            $row = $this->getRecordsFromRecordset([$rsnew], true);
-            WriteJson(["success" => true, $this->TableVar => $row]);
-        }
-        return $addRow;
-    }
-
     // Set up Breadcrumb
     protected function setupBreadcrumb()
     {
@@ -877,8 +661,8 @@ class KodeposAdd extends Kodepos
         $Breadcrumb = new Breadcrumb("index");
         $url = CurrentUrl();
         $Breadcrumb->add("list", $this->TableVar, $this->addMasterUrl("KodeposList"), "", $this->TableVar, true);
-        $pageId = ($this->isCopy()) ? "Copy" : "Add";
-        $Breadcrumb->add("add", $pageId, $url);
+        $pageId = "addopt";
+        $Breadcrumb->add("addopt", $pageId, $url);
     }
 
     // Setup lookup options
@@ -971,12 +755,5 @@ class KodeposAdd extends Kodepos
     {
         // Example:
         //$footer = "your footer";
-    }
-
-    // Form Custom Validate event
-    public function formCustomValidate(&$customError)
-    {
-        // Return error message in CustomError
-        return true;
     }
 }

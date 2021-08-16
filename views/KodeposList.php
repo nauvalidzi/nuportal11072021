@@ -89,14 +89,11 @@ $Page->renderListOptions();
 // Render list options (header, left)
 $Page->ListOptions->render("header", "left");
 ?>
-<?php if ($Page->id->Visible) { // id ?>
-        <th data-name="id" class="<?= $Page->id->headerCellClass() ?>"><div id="elh_kodepos_id" class="kodepos_id"><?= $Page->renderSort($Page->id) ?></div></th>
-<?php } ?>
-<?php if ($Page->kelurahan_id->Visible) { // kelurahan_id ?>
-        <th data-name="kelurahan_id" class="<?= $Page->kelurahan_id->headerCellClass() ?>"><div id="elh_kodepos_kelurahan_id" class="kodepos_kelurahan_id"><?= $Page->renderSort($Page->kelurahan_id) ?></div></th>
-<?php } ?>
 <?php if ($Page->kodepos->Visible) { // kodepos ?>
         <th data-name="kodepos" class="<?= $Page->kodepos->headerCellClass() ?>"><div id="elh_kodepos_kodepos" class="kodepos_kodepos"><?= $Page->renderSort($Page->kodepos) ?></div></th>
+<?php } ?>
+<?php if ($Page->kecamatan_id->Visible) { // kecamatan_id ?>
+        <th data-name="kecamatan_id" class="<?= $Page->kecamatan_id->headerCellClass() ?>"><div id="elh_kodepos_kecamatan_id" class="kodepos_kecamatan_id"><?= $Page->renderSort($Page->kecamatan_id) ?></div></th>
 <?php } ?>
 <?php
 // Render list options (header, right)
@@ -165,27 +162,19 @@ while ($Page->RecordCount < $Page->StopRecord) {
 // Render list options (body, left)
 $Page->ListOptions->render("body", "left", $Page->RowCount);
 ?>
-    <?php if ($Page->id->Visible) { // id ?>
-        <td data-name="id" <?= $Page->id->cellAttributes() ?>>
-<span id="el<?= $Page->RowCount ?>_kodepos_id">
-<span<?= $Page->id->viewAttributes() ?>>
-<?= $Page->id->getViewValue() ?></span>
-</span>
-</td>
-    <?php } ?>
-    <?php if ($Page->kelurahan_id->Visible) { // kelurahan_id ?>
-        <td data-name="kelurahan_id" <?= $Page->kelurahan_id->cellAttributes() ?>>
-<span id="el<?= $Page->RowCount ?>_kodepos_kelurahan_id">
-<span<?= $Page->kelurahan_id->viewAttributes() ?>>
-<?= $Page->kelurahan_id->getViewValue() ?></span>
-</span>
-</td>
-    <?php } ?>
     <?php if ($Page->kodepos->Visible) { // kodepos ?>
         <td data-name="kodepos" <?= $Page->kodepos->cellAttributes() ?>>
 <span id="el<?= $Page->RowCount ?>_kodepos_kodepos">
 <span<?= $Page->kodepos->viewAttributes() ?>>
 <?= $Page->kodepos->getViewValue() ?></span>
+</span>
+</td>
+    <?php } ?>
+    <?php if ($Page->kecamatan_id->Visible) { // kecamatan_id ?>
+        <td data-name="kecamatan_id" <?= $Page->kecamatan_id->cellAttributes() ?>>
+<span id="el<?= $Page->RowCount ?>_kodepos_kecamatan_id">
+<span<?= $Page->kecamatan_id->viewAttributes() ?>>
+<?= $Page->kecamatan_id->getViewValue() ?></span>
 </span>
 </td>
     <?php } ?>

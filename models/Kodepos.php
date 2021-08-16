@@ -28,9 +28,8 @@ class Kodepos extends DbTable
     public $ExportDoc;
 
     // Fields
-    public $id;
-    public $kelurahan_id;
     public $kodepos;
+    public $kecamatan_id;
 
     // Page ID
     public $PageID = ""; // To be overridden by subclass
@@ -67,32 +66,22 @@ class Kodepos extends DbTable
         $this->UserIDAllowSecurity = Config("DEFAULT_USER_ID_ALLOW_SECURITY"); // Default User ID allowed permissions
         $this->BasicSearch = new BasicSearch($this->TableVar);
 
-        // id
-        $this->id = new DbField('kodepos', 'kodepos', 'x_id', 'id', '`id`', '`id`', 3, 11, -1, false, '`id`', false, false, false, 'FORMATTED TEXT', 'TEXT');
-        $this->id->IsPrimaryKey = true; // Primary key field
-        $this->id->Nullable = false; // NOT NULL field
-        $this->id->Required = true; // Required field
-        $this->id->Sortable = true; // Allow sort
-        $this->id->DefaultErrorMessage = $Language->phrase("IncorrectInteger");
-        $this->id->CustomMsg = $Language->FieldPhrase($this->TableVar, $this->id->Param, "CustomMsg");
-        $this->Fields['id'] = &$this->id;
-
-        // kelurahan_id
-        $this->kelurahan_id = new DbField('kodepos', 'kodepos', 'x_kelurahan_id', 'kelurahan_id', '`kelurahan_id`', '`kelurahan_id`', 19, 10, -1, false, '`kelurahan_id`', false, false, false, 'FORMATTED TEXT', 'TEXT');
-        $this->kelurahan_id->Nullable = false; // NOT NULL field
-        $this->kelurahan_id->Required = true; // Required field
-        $this->kelurahan_id->Sortable = true; // Allow sort
-        $this->kelurahan_id->DefaultErrorMessage = $Language->phrase("IncorrectInteger");
-        $this->kelurahan_id->CustomMsg = $Language->FieldPhrase($this->TableVar, $this->kelurahan_id->Param, "CustomMsg");
-        $this->Fields['kelurahan_id'] = &$this->kelurahan_id;
-
         // kodepos
-        $this->kodepos = new DbField('kodepos', 'kodepos', 'x_kodepos', 'kodepos', '`kodepos`', '`kodepos`', 200, 10, -1, false, '`kodepos`', false, false, false, 'FORMATTED TEXT', 'TEXT');
+        $this->kodepos = new DbField('kodepos', 'kodepos', 'x_kodepos', 'kodepos', '`kodepos`', '`kodepos`', 3, 11, -1, false, '`kodepos`', false, false, false, 'FORMATTED TEXT', 'TEXT');
         $this->kodepos->Nullable = false; // NOT NULL field
-        $this->kodepos->Required = true; // Required field
         $this->kodepos->Sortable = true; // Allow sort
+        $this->kodepos->DefaultErrorMessage = $Language->phrase("IncorrectInteger");
         $this->kodepos->CustomMsg = $Language->FieldPhrase($this->TableVar, $this->kodepos->Param, "CustomMsg");
         $this->Fields['kodepos'] = &$this->kodepos;
+
+        // kecamatan_id
+        $this->kecamatan_id = new DbField('kodepos', 'kodepos', 'x_kecamatan_id', 'kecamatan_id', '`kecamatan_id`', '`kecamatan_id`', 19, 30, -1, false, '`kecamatan_id`', false, false, false, 'FORMATTED TEXT', 'TEXT');
+        $this->kecamatan_id->Nullable = false; // NOT NULL field
+        $this->kecamatan_id->Required = true; // Required field
+        $this->kecamatan_id->Sortable = true; // Allow sort
+        $this->kecamatan_id->DefaultErrorMessage = $Language->phrase("IncorrectInteger");
+        $this->kecamatan_id->CustomMsg = $Language->FieldPhrase($this->TableVar, $this->kecamatan_id->Param, "CustomMsg");
+        $this->Fields['kecamatan_id'] = &$this->kecamatan_id;
     }
 
     // Field Visibility
@@ -478,9 +467,6 @@ class Kodepos extends DbTable
             $where = $this->arrayToFilter($where);
         }
         if ($rs) {
-            if (array_key_exists('id', $rs)) {
-                AddFilter($where, QuotedName('id', $this->Dbid) . '=' . QuotedValue($rs['id'], $this->id->DataType, $this->Dbid));
-            }
         }
         $filter = ($curfilter) ? $this->CurrentFilter : "";
         AddFilter($filter, $where);
@@ -503,9 +489,8 @@ class Kodepos extends DbTable
         if (!is_array($row)) {
             return;
         }
-        $this->id->DbValue = $row['id'];
-        $this->kelurahan_id->DbValue = $row['kelurahan_id'];
         $this->kodepos->DbValue = $row['kodepos'];
+        $this->kecamatan_id->DbValue = $row['kecamatan_id'];
     }
 
     // Delete uploaded files
@@ -517,19 +502,13 @@ class Kodepos extends DbTable
     // Record filter WHERE clause
     protected function sqlKeyFilter()
     {
-        return "`id` = @id@";
+        return "";
     }
 
     // Get Key
     public function getKey($current = false)
     {
         $keys = [];
-        $val = $current ? $this->id->CurrentValue : $this->id->OldValue;
-        if (EmptyValue($val)) {
-            return "";
-        } else {
-            $keys[] = $val;
-        }
         return implode(Config("COMPOSITE_KEY_SEPARATOR"), $keys);
     }
 
@@ -538,12 +517,7 @@ class Kodepos extends DbTable
     {
         $this->OldKey = strval($key);
         $keys = explode(Config("COMPOSITE_KEY_SEPARATOR"), $this->OldKey);
-        if (count($keys) == 1) {
-            if ($current) {
-                $this->id->CurrentValue = $keys[0];
-            } else {
-                $this->id->OldValue = $keys[0];
-            }
+        if (count($keys) == 0) {
         }
     }
 
@@ -551,19 +525,6 @@ class Kodepos extends DbTable
     public function getRecordFilter($row = null)
     {
         $keyFilter = $this->sqlKeyFilter();
-        if (is_array($row)) {
-            $val = array_key_exists('id', $row) ? $row['id'] : null;
-        } else {
-            $val = $this->id->OldValue !== null ? $this->id->OldValue : $this->id->CurrentValue;
-        }
-        if (!is_numeric($val)) {
-            return "0=1"; // Invalid key
-        }
-        if ($val === null) {
-            return "0=1"; // Invalid key
-        } else {
-            $keyFilter = str_replace("@id@", AdjustSql($val, $this->Dbid), $keyFilter); // Replace key value
-        }
         return $keyFilter;
     }
 
@@ -691,7 +652,6 @@ class Kodepos extends DbTable
     public function keyToJson($htmlEncode = false)
     {
         $json = "";
-        $json .= "id:" . JsonEncode($this->id->CurrentValue, "number");
         $json = "{" . $json . "}";
         if ($htmlEncode) {
             $json = HtmlEncode($json);
@@ -702,11 +662,6 @@ class Kodepos extends DbTable
     // Add key value to URL
     public function keyUrl($url, $parm = "")
     {
-        if ($this->id->CurrentValue !== null) {
-            $url .= "/" . rawurlencode($this->id->CurrentValue);
-        } else {
-            return "javascript:ew.alert(ew.language.phrase('InvalidRecord'));";
-        }
         if ($parm != "") {
             $url .= "?" . $parm;
         }
@@ -765,23 +720,12 @@ SORTHTML;
             $arKeys = Param("key_m");
             $cnt = count($arKeys);
         } else {
-            if (($keyValue = Param("id") ?? Route("id")) !== null) {
-                $arKeys[] = $keyValue;
-            } elseif (IsApi() && (($keyValue = Key(0) ?? Route(2)) !== null)) {
-                $arKeys[] = $keyValue;
-            } else {
-                $arKeys = null; // Do not setup
-            }
-
             //return $arKeys; // Do not return yet, so the values will also be checked by the following code
         }
         // Check keys
         $ar = [];
         if (is_array($arKeys)) {
             foreach ($arKeys as $key) {
-                if (!is_numeric($key)) {
-                    continue;
-                }
                 $ar[] = $key;
             }
         }
@@ -796,11 +740,6 @@ SORTHTML;
         foreach ($arKeys as $key) {
             if ($keyFilter != "") {
                 $keyFilter .= " OR ";
-            }
-            if ($setCurrent) {
-                $this->id->CurrentValue = $key;
-            } else {
-                $this->id->OldValue = $key;
             }
             $keyFilter .= "(" . $this->getRecordFilter() . ")";
         }
@@ -826,9 +765,8 @@ SORTHTML;
         } else {
             return;
         }
-        $this->id->setDbValue($row['id']);
-        $this->kelurahan_id->setDbValue($row['kelurahan_id']);
         $this->kodepos->setDbValue($row['kodepos']);
+        $this->kecamatan_id->setDbValue($row['kecamatan_id']);
     }
 
     // Render list row values
@@ -841,39 +779,28 @@ SORTHTML;
 
         // Common render codes
 
-        // id
-
-        // kelurahan_id
-
         // kodepos
 
-        // id
-        $this->id->ViewValue = $this->id->CurrentValue;
-        $this->id->ViewCustomAttributes = "";
-
-        // kelurahan_id
-        $this->kelurahan_id->ViewValue = $this->kelurahan_id->CurrentValue;
-        $this->kelurahan_id->ViewValue = FormatNumber($this->kelurahan_id->ViewValue, 0, -2, -2, -2);
-        $this->kelurahan_id->ViewCustomAttributes = "";
+        // kecamatan_id
 
         // kodepos
         $this->kodepos->ViewValue = $this->kodepos->CurrentValue;
         $this->kodepos->ViewCustomAttributes = "";
 
-        // id
-        $this->id->LinkCustomAttributes = "";
-        $this->id->HrefValue = "";
-        $this->id->TooltipValue = "";
-
-        // kelurahan_id
-        $this->kelurahan_id->LinkCustomAttributes = "";
-        $this->kelurahan_id->HrefValue = "";
-        $this->kelurahan_id->TooltipValue = "";
+        // kecamatan_id
+        $this->kecamatan_id->ViewValue = $this->kecamatan_id->CurrentValue;
+        $this->kecamatan_id->ViewValue = FormatNumber($this->kecamatan_id->ViewValue, 0, -2, -2, -2);
+        $this->kecamatan_id->ViewCustomAttributes = "";
 
         // kodepos
         $this->kodepos->LinkCustomAttributes = "";
         $this->kodepos->HrefValue = "";
         $this->kodepos->TooltipValue = "";
+
+        // kecamatan_id
+        $this->kecamatan_id->LinkCustomAttributes = "";
+        $this->kecamatan_id->HrefValue = "";
+        $this->kecamatan_id->TooltipValue = "";
 
         // Call Row Rendered event
         $this->rowRendered();
@@ -890,23 +817,17 @@ SORTHTML;
         // Call Row Rendering event
         $this->rowRendering();
 
-        // id
-        $this->id->EditAttrs["class"] = "form-control";
-        $this->id->EditCustomAttributes = "";
-        $this->id->EditValue = $this->id->CurrentValue;
-
-        // kelurahan_id
-        $this->kelurahan_id->EditAttrs["class"] = "form-control";
-        $this->kelurahan_id->EditCustomAttributes = "";
-        $this->kelurahan_id->EditValue = $this->kelurahan_id->CurrentValue;
-
         // kodepos
         $this->kodepos->EditAttrs["class"] = "form-control";
         $this->kodepos->EditCustomAttributes = "";
-        if (!$this->kodepos->Raw) {
-            $this->kodepos->CurrentValue = HtmlDecode($this->kodepos->CurrentValue);
-        }
         $this->kodepos->EditValue = $this->kodepos->CurrentValue;
+
+        // kecamatan_id
+        $this->kecamatan_id->EditAttrs["class"] = "form-control";
+        $this->kecamatan_id->EditCustomAttributes = "";
+        $this->kecamatan_id->EditValue = $this->kecamatan_id->CurrentValue;
+        $this->kecamatan_id->EditValue = FormatNumber($this->kecamatan_id->EditValue, 0, -2, -2, -2);
+        $this->kecamatan_id->ViewCustomAttributes = "";
 
         // Call Row Rendered event
         $this->rowRendered();
@@ -936,13 +857,11 @@ SORTHTML;
             if ($doc->Horizontal) { // Horizontal format, write header
                 $doc->beginExportRow();
                 if ($exportPageType == "view") {
-                    $doc->exportCaption($this->id);
-                    $doc->exportCaption($this->kelurahan_id);
                     $doc->exportCaption($this->kodepos);
+                    $doc->exportCaption($this->kecamatan_id);
                 } else {
-                    $doc->exportCaption($this->id);
-                    $doc->exportCaption($this->kelurahan_id);
                     $doc->exportCaption($this->kodepos);
+                    $doc->exportCaption($this->kecamatan_id);
                 }
                 $doc->endExportRow();
             }
@@ -972,13 +891,11 @@ SORTHTML;
                 if (!$doc->ExportCustom) {
                     $doc->beginExportRow($rowCnt); // Allow CSS styles if enabled
                     if ($exportPageType == "view") {
-                        $doc->exportField($this->id);
-                        $doc->exportField($this->kelurahan_id);
                         $doc->exportField($this->kodepos);
+                        $doc->exportField($this->kecamatan_id);
                     } else {
-                        $doc->exportField($this->id);
-                        $doc->exportField($this->kelurahan_id);
                         $doc->exportField($this->kodepos);
+                        $doc->exportField($this->kecamatan_id);
                     }
                     $doc->endExportRow($rowCnt);
                 }

@@ -179,10 +179,10 @@ class Pesantren extends DbTable
         $this->kecamatan->PleaseSelectText = $Language->phrase("PleaseSelect"); // "PleaseSelect" text
         switch ($CurrentLanguage) {
             case "en":
-                $this->kecamatan->Lookup = new Lookup('kecamatan', 'kecamatans', false, 'id', ["name","","",""], ["x_kabupaten"], ["x_desa"], ["kabupaten_id"], ["x_kabupaten_id"], [], [], '', '');
+                $this->kecamatan->Lookup = new Lookup('kecamatan', 'kecamatans', false, 'id', ["name","","",""], ["x_kabupaten"], ["x_desa","x_kodepos"], ["kabupaten_id"], ["x_kabupaten_id"], [], [], '', '');
                 break;
             default:
-                $this->kecamatan->Lookup = new Lookup('kecamatan', 'kecamatans', false, 'id', ["name","","",""], ["x_kabupaten"], ["x_desa"], ["kabupaten_id"], ["x_kabupaten_id"], [], [], '', '');
+                $this->kecamatan->Lookup = new Lookup('kecamatan', 'kecamatans', false, 'id', ["name","","",""], ["x_kabupaten"], ["x_desa","x_kodepos"], ["kabupaten_id"], ["x_kabupaten_id"], [], [], '', '');
                 break;
         }
         $this->kecamatan->CustomMsg = $Language->FieldPhrase($this->TableVar, $this->kecamatan->Param, "CustomMsg");
@@ -195,10 +195,10 @@ class Pesantren extends DbTable
         $this->desa->PleaseSelectText = $Language->phrase("PleaseSelect"); // "PleaseSelect" text
         switch ($CurrentLanguage) {
             case "en":
-                $this->desa->Lookup = new Lookup('desa', 'kelurahans', false, 'id', ["name","","",""], ["x_kecamatan"], ["x_kodepos"], ["kecamatan_id"], ["x_kecamatan_id"], [], [], '', '');
+                $this->desa->Lookup = new Lookup('desa', 'kelurahans', false, 'id', ["name","","",""], ["x_kecamatan"], [], ["kecamatan_id"], ["x_kecamatan_id"], [], [], '', '');
                 break;
             default:
-                $this->desa->Lookup = new Lookup('desa', 'kelurahans', false, 'id', ["name","","",""], ["x_kecamatan"], ["x_kodepos"], ["kecamatan_id"], ["x_kecamatan_id"], [], [], '', '');
+                $this->desa->Lookup = new Lookup('desa', 'kelurahans', false, 'id', ["name","","",""], ["x_kecamatan"], [], ["kecamatan_id"], ["x_kecamatan_id"], [], [], '', '');
                 break;
         }
         $this->desa->CustomMsg = $Language->FieldPhrase($this->TableVar, $this->desa->Param, "CustomMsg");
@@ -211,12 +211,13 @@ class Pesantren extends DbTable
         $this->kodepos->PleaseSelectText = $Language->phrase("PleaseSelect"); // "PleaseSelect" text
         switch ($CurrentLanguage) {
             case "en":
-                $this->kodepos->Lookup = new Lookup('kodepos', 'kodepos', false, 'kodepos', ["kodepos","","",""], ["x_desa"], [], ["kelurahan_id"], ["x_kelurahan_id"], [], [], '', '');
+                $this->kodepos->Lookup = new Lookup('kodepos', 'kodepos', false, 'kodepos', ["kodepos","","",""], ["x_kecamatan"], [], ["kecamatan_id"], ["x_kecamatan_id"], [], [], '', '');
                 break;
             default:
-                $this->kodepos->Lookup = new Lookup('kodepos', 'kodepos', false, 'kodepos', ["kodepos","","",""], ["x_desa"], [], ["kelurahan_id"], ["x_kelurahan_id"], [], [], '', '');
+                $this->kodepos->Lookup = new Lookup('kodepos', 'kodepos', false, 'kodepos', ["kodepos","","",""], ["x_kecamatan"], [], ["kecamatan_id"], ["x_kecamatan_id"], [], [], '', '');
                 break;
         }
+        $this->kodepos->DefaultErrorMessage = $Language->phrase("IncorrectInteger");
         $this->kodepos->CustomMsg = $Language->FieldPhrase($this->TableVar, $this->kodepos->Param, "CustomMsg");
         $this->Fields['kodepos'] = &$this->kodepos;
 
@@ -1898,7 +1899,7 @@ SORTHTML;
         if ($curVal != "") {
             $this->kodepos->ViewValue = $this->kodepos->lookupCacheOption($curVal);
             if ($this->kodepos->ViewValue === null) { // Lookup from database
-                $filterWrk = "`kodepos`" . SearchString("=", $curVal, DATATYPE_STRING, "");
+                $filterWrk = "`kodepos`" . SearchString("=", $curVal, DATATYPE_NUMBER, "");
                 $sqlWrk = $this->kodepos->Lookup->getSql(false, $filterWrk, '', $this, true, true);
                 $rswrk = Conn()->executeQuery($sqlWrk)->fetchAll(\PDO::FETCH_BOTH);
                 $ari = count($rswrk);

@@ -426,7 +426,6 @@ class KodeposList extends Kodepos
     {
         $key = "";
         if (is_array($ar)) {
-            $key .= @$ar['id'];
         }
         return $key;
     }
@@ -565,9 +564,8 @@ class KodeposList extends Kodepos
 
         // Set up list options
         $this->setupListOptions();
-        $this->id->setVisibility();
-        $this->kelurahan_id->setVisibility();
         $this->kodepos->setVisibility();
+        $this->kecamatan_id->setVisibility();
         $this->hideFieldsForAddEdit();
 
         // Global Page Loading event (in userfn*.php)
@@ -807,9 +805,8 @@ class KodeposList extends Kodepos
         if (Get("order") !== null) {
             $this->CurrentOrder = Get("order");
             $this->CurrentOrderType = Get("ordertype", "");
-            $this->updateSort($this->id); // id
-            $this->updateSort($this->kelurahan_id); // kelurahan_id
             $this->updateSort($this->kodepos); // kodepos
+            $this->updateSort($this->kecamatan_id); // kecamatan_id
             $this->setStartRecordNumber(1); // Reset start position
         }
     }
@@ -844,9 +841,8 @@ class KodeposList extends Kodepos
             if ($this->Command == "resetsort") {
                 $orderBy = "";
                 $this->setSessionOrderBy($orderBy);
-                $this->id->setSort("");
-                $this->kelurahan_id->setSort("");
                 $this->kodepos->setSort("");
+                $this->kecamatan_id->setSort("");
             }
 
             // Reset start position
@@ -866,24 +862,6 @@ class KodeposList extends Kodepos
         $item->OnLeft = true;
         $item->Visible = false;
 
-        // "view"
-        $item = &$this->ListOptions->add("view");
-        $item->CssClass = "text-nowrap";
-        $item->Visible = $Security->canView();
-        $item->OnLeft = true;
-
-        // "edit"
-        $item = &$this->ListOptions->add("edit");
-        $item->CssClass = "text-nowrap";
-        $item->Visible = $Security->canEdit();
-        $item->OnLeft = true;
-
-        // "copy"
-        $item = &$this->ListOptions->add("copy");
-        $item->CssClass = "text-nowrap";
-        $item->Visible = $Security->canAdd();
-        $item->OnLeft = true;
-
         // List actions
         $item = &$this->ListOptions->add("listactions");
         $item->CssClass = "text-nowrap";
@@ -894,7 +872,7 @@ class KodeposList extends Kodepos
 
         // "checkbox"
         $item = &$this->ListOptions->add("checkbox");
-        $item->Visible = $Security->canDelete();
+        $item->Visible = false;
         $item->OnLeft = true;
         $item->Header = "<div class=\"custom-control custom-checkbox d-inline-block\"><input type=\"checkbox\" name=\"key\" id=\"key\" class=\"custom-control-input\" onclick=\"ew.selectAllKey(this);\"><label class=\"custom-control-label\" for=\"key\"></label></div>";
         $item->moveTo(0);
@@ -927,33 +905,7 @@ class KodeposList extends Kodepos
         // Call ListOptions_Rendering event
         $this->listOptionsRendering();
         $pageUrl = $this->pageUrl();
-        if ($this->CurrentMode == "view") {
-            // "view"
-            $opt = $this->ListOptions["view"];
-            $viewcaption = HtmlTitle($Language->phrase("ViewLink"));
-            if ($Security->canView()) {
-                $opt->Body = "<a class=\"ew-row-link ew-view\" title=\"" . $viewcaption . "\" data-caption=\"" . $viewcaption . "\" href=\"" . HtmlEncode(GetUrl($this->ViewUrl)) . "\">" . $Language->phrase("ViewLink") . "</a>";
-            } else {
-                $opt->Body = "";
-            }
-
-            // "edit"
-            $opt = $this->ListOptions["edit"];
-            $editcaption = HtmlTitle($Language->phrase("EditLink"));
-            if ($Security->canEdit()) {
-                $opt->Body = "<a class=\"ew-row-link ew-edit\" title=\"" . HtmlTitle($Language->phrase("EditLink")) . "\" data-caption=\"" . HtmlTitle($Language->phrase("EditLink")) . "\" href=\"" . HtmlEncode(GetUrl($this->EditUrl)) . "\">" . $Language->phrase("EditLink") . "</a>";
-            } else {
-                $opt->Body = "";
-            }
-
-            // "copy"
-            $opt = $this->ListOptions["copy"];
-            $copycaption = HtmlTitle($Language->phrase("CopyLink"));
-            if ($Security->canAdd()) {
-                $opt->Body = "<a class=\"ew-row-link ew-copy\" title=\"" . $copycaption . "\" data-caption=\"" . $copycaption . "\" href=\"" . HtmlEncode(GetUrl($this->CopyUrl)) . "\">" . $Language->phrase("CopyLink") . "</a>";
-            } else {
-                $opt->Body = "";
-            }
+        if ($this->CurrentMode == "view") { // View mode
         } // End View mode
 
         // Set up list action buttons
@@ -989,7 +941,6 @@ class KodeposList extends Kodepos
 
         // "checkbox"
         $opt = $this->ListOptions["checkbox"];
-        $opt->Body = "<div class=\"custom-control custom-checkbox d-inline-block\"><input type=\"checkbox\" id=\"key_m_" . $this->RowCount . "\" name=\"key_m[]\" class=\"custom-control-input ew-multi-select\" value=\"" . HtmlEncode($this->id->CurrentValue) . "\" onclick=\"ew.clickMultiCheckbox(event);\"><label class=\"custom-control-label\" for=\"key_m_" . $this->RowCount . "\"></label></div>";
         $this->renderListOptionsExt();
 
         // Call ListOptions_Rendered event
@@ -1009,11 +960,6 @@ class KodeposList extends Kodepos
         $item->Body = "<a class=\"ew-add-edit ew-add\" title=\"" . $addcaption . "\" data-caption=\"" . $addcaption . "\" href=\"" . HtmlEncode(GetUrl($this->AddUrl)) . "\">" . $Language->phrase("AddLink") . "</a>";
         $item->Visible = $this->AddUrl != "" && $Security->canAdd();
         $option = $options["action"];
-
-        // Add multi delete
-        $item = &$option->add("multidelete");
-        $item->Body = "<a class=\"ew-action ew-multi-delete\" title=\"" . HtmlTitle($Language->phrase("DeleteSelectedLink")) . "\" data-caption=\"" . HtmlTitle($Language->phrase("DeleteSelectedLink")) . "\" href=\"#\" onclick=\"return ew.submitAction(event, {f:document.fkodeposlist, url:'" . GetUrl($this->MultiDeleteUrl) . "', data:{action:'show'}});return false;\">" . $Language->phrase("DeleteSelectedLink") . "</a>";
-        $item->Visible = $Security->canDelete();
 
         // Set up options default
         foreach ($options as $option) {
@@ -1237,35 +1183,23 @@ class KodeposList extends Kodepos
         if (!$rs) {
             return;
         }
-        $this->id->setDbValue($row['id']);
-        $this->kelurahan_id->setDbValue($row['kelurahan_id']);
         $this->kodepos->setDbValue($row['kodepos']);
+        $this->kecamatan_id->setDbValue($row['kecamatan_id']);
     }
 
     // Return a row with default values
     protected function newRow()
     {
         $row = [];
-        $row['id'] = null;
-        $row['kelurahan_id'] = null;
         $row['kodepos'] = null;
+        $row['kecamatan_id'] = null;
         return $row;
     }
 
     // Load old record
     protected function loadOldRecord()
     {
-        // Load old record
-        $this->OldRecordset = null;
-        $validKey = $this->OldKey != "";
-        if ($validKey) {
-            $this->CurrentFilter = $this->getRecordFilter();
-            $sql = $this->getCurrentSql();
-            $conn = $this->getConnection();
-            $this->OldRecordset = LoadRecordset($sql, $conn);
-        }
-        $this->loadRowValues($this->OldRecordset); // Load row values
-        return $validKey;
+        return false;
     }
 
     // Render row values based on field settings
@@ -1286,39 +1220,28 @@ class KodeposList extends Kodepos
 
         // Common render codes for all row types
 
-        // id
-
-        // kelurahan_id
-
         // kodepos
+
+        // kecamatan_id
         if ($this->RowType == ROWTYPE_VIEW) {
-            // id
-            $this->id->ViewValue = $this->id->CurrentValue;
-            $this->id->ViewCustomAttributes = "";
-
-            // kelurahan_id
-            $this->kelurahan_id->ViewValue = $this->kelurahan_id->CurrentValue;
-            $this->kelurahan_id->ViewValue = FormatNumber($this->kelurahan_id->ViewValue, 0, -2, -2, -2);
-            $this->kelurahan_id->ViewCustomAttributes = "";
-
             // kodepos
             $this->kodepos->ViewValue = $this->kodepos->CurrentValue;
             $this->kodepos->ViewCustomAttributes = "";
 
-            // id
-            $this->id->LinkCustomAttributes = "";
-            $this->id->HrefValue = "";
-            $this->id->TooltipValue = "";
-
-            // kelurahan_id
-            $this->kelurahan_id->LinkCustomAttributes = "";
-            $this->kelurahan_id->HrefValue = "";
-            $this->kelurahan_id->TooltipValue = "";
+            // kecamatan_id
+            $this->kecamatan_id->ViewValue = $this->kecamatan_id->CurrentValue;
+            $this->kecamatan_id->ViewValue = FormatNumber($this->kecamatan_id->ViewValue, 0, -2, -2, -2);
+            $this->kecamatan_id->ViewCustomAttributes = "";
 
             // kodepos
             $this->kodepos->LinkCustomAttributes = "";
             $this->kodepos->HrefValue = "";
             $this->kodepos->TooltipValue = "";
+
+            // kecamatan_id
+            $this->kecamatan_id->LinkCustomAttributes = "";
+            $this->kecamatan_id->HrefValue = "";
+            $this->kecamatan_id->TooltipValue = "";
         }
 
         // Call Row Rendered event
