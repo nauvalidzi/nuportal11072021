@@ -469,21 +469,6 @@ class AdvancedSecurity
             $this->setCurrentUserName($usr); // Load user name
         }
 
-        // Check hard coded admin first
-        if (!$valid) {
-            $valid = $this->validateSysAdmin($usr, $pwd, $customValid);
-            if ($valid) {
-                $this->isLoggedIn = true;
-                $_SESSION[SESSION_STATUS] = "login";
-                $this->isSysAdmin = true;
-                $_SESSION[SESSION_SYS_ADMIN] = 1; // System Administrator
-                $this->setCurrentUserName($Language->phrase("UserAdministrator")); // Load user name
-                $this->setSessionUserLevelID(-1); // System Administrator
-                $this->setSessionUserID(-1); // System Administrator
-                $this->setupUserLevel();
-            }
-        }
-
         // Check other users
         if (!$valid) {
             $filter = GetUserFilter(Config("LOGIN_USERNAME_FIELD_NAME"), $usr);
